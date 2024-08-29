@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+""" adds arrays """
+
 def add_arrays(arr1, arr2):
     """
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+""" transpose of matrix """
 def matrix_transpose(matrix):
     """
     :param matrix: 2D array to find the transpose of
