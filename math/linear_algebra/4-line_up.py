@@ -15,5 +15,3 @@ def add_arrays(arr1, arr2):
         return None
     else:
         return [a + b for a, b in zip(arr1, arr2)]
-
-print(add_arrays([1,2,3,4], [1,2,3,4]))
