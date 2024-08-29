@@ -6,4 +6,4 @@ def matrix_shape(matrix):
     while isinstance(matrix, list):
         shape.append(len(matrix))
         matrix = matrix[0]
-        return shape
+    return shape
