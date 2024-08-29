@@ -10,4 +10,4 @@ def np_shape(matrx):
     :return: tuple of size
 
     """
-     return matrix.shape
+    return matrix.shape
