@@ -3,7 +3,7 @@
 """finds size of np array"""
 
 
-def np_shape(matrx):
+def np_shape(matrix):
     """
 
     :param matrx: 2D array
