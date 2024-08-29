@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """find size of matrix"""
+
+
 def matrix_shape(matrix):
     """
         Calculates shape of a matrix
