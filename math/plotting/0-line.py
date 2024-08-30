@@ -12,3 +12,4 @@ def line():
     plt.figure(figsize=(6.4, 4.8))
     plt.plot(x, y, color='#FF0000')
     plt.show()
+    plt.xlim(0, 10)
