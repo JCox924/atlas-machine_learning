@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-"""Line Plot"""
+"""This file module contains the function(s) line() with shows a Line Plot"""
 
 
 def line():
