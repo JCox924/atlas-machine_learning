@@ -2,6 +2,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+"""Line Plot"""
+
+
 def line():
     """
     line(void)
