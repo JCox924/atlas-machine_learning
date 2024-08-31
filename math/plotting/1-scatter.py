@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import numpy as np
 import matplotlib.pyplot as plt
-""" This module has a function that shows a scatter plot """
+"""
+
+"""
 
 
 def scatter():
