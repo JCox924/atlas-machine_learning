@@ -20,6 +20,6 @@ def two():
     plt.ylabel('Fraction Remaining')
     plt.xlim(0, 20000)
     line1, = plt.plot(x, y1, c='#FF0000', ls='--', label='C-14')
-    line2, = plt.plot(x, y2, c='#00FF00', ls='-', label='Ra-226')
+    line2, = plt.plot(x, y2, c='g', ls='-', label='Ra-226')
     plt.legend(handles=[line1, line2], loc=1)
     plt.show()
