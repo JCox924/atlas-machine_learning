@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 
 def change_scale():
     """
+    :param: None
 
     :return: Line PyPlot of the exponential radioactive-decay of Carbon-14
     """
