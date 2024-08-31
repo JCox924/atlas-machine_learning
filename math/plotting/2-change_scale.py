@@ -23,4 +23,4 @@ def change_scale():
     plt.title('Exponential Decay of C-14')
     plt.xlabel('Time (years)')
     plt.ylabel('Fraction Remaining')
-    plt.plot(x, y, c='#0000FF')
+    plt.plot(x, y)
