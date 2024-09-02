@@ -11,7 +11,7 @@ def bars():
 
     colors = ['#FF0000', '#FFFF00', '#FF8000', '#FFE5B4']
 
-    labels = ['Apples', 'Bananas', 'Oranges', 'Peaches']
+    labels = ['apples', 'bananas', 'oranges', 'peaches']
 
     width = 0.5
 
