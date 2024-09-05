@@ -26,8 +26,8 @@ def bars():
     plt.ylabel('Quantity of Fruits')
     plt.title('Number of Fruit per Person')
     plt.xticks(indices, names)
-    plt.yticks(np.arange(0, 80, 10))
+    plt.yticks(np.arange(0, 81, 10))
     plt.ylim(0, 80)
 
-    plt.legend(loc=1)
+    plt.legend(loc='best')
     plt.show()
