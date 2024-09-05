@@ -4,7 +4,7 @@ def poly_derivative(poly):
     if not isinstance(poly, list) or not all(isinstance(c, (int, float)) for c in poly):
         return None
     if len(poly) == 1:
-        return None
+        return [0]
 
     derivative = [coef * i for i, coef in enumerate(poly) if i > 0]
 
