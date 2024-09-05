@@ -21,7 +21,7 @@ def bars():
 
     for i in range(fruit.shape[0]):
         plt.bar(indices, fruit[i], width=width, bottom=floor, color=colors[i], label=labels[i])
-        floor = fruit[i]
+        floor += fruit[i]
 
     plt.ylabel('Quantity of Fruits')
     plt.title('Number of Fruit per Person')
