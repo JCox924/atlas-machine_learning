@@ -2,7 +2,8 @@
 
 def poly_integral(poly, C=0):
     # Check if poly is a valid list of numbers and C is a valid integer
-    if not isinstance(poly, list) or len(poly) == 0 or not all(isinstance(c, (int, float)) for c in poly):
+    if not isinstance(poly, list) or len(poly) == 0 or \
+            not all(isinstance(c, (int, float)) for c in poly):
         return None
     if not isinstance(C, int):
         return None
