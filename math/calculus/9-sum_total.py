@@ -1,4 +1,4 @@
-#!/usr/bin/env/python3
+#!/usr/bin/env python3
 
 def summation_i_squared(n):
     if not isinstance(n, int) or n < 1:
