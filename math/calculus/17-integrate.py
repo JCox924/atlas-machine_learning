@@ -1,7 +1,16 @@
 #!/usr/bin/env python3
+"""
+This module contains the function(s) poly_integral(poly, C=0)
+"""
+
 
 def poly_integral(poly, C=0):
-    # Check if poly is a valid list of numbers and C is a valid integer
+    """
+
+    :arg poly: list of polynomials
+    :arg C: constant
+    :return: integral
+    """
     if not isinstance(poly, list) or len(poly) == 0 or \
             not all(isinstance(c, (int, float)) for c in poly):
         return None

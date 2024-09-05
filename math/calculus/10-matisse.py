@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+"""
+This module contains the function poly_dericative(poly)
+"""
+
 
 def poly_derivative(poly):
+    """
+    :arg poly: list of polynomials
+    :return: derivative
+    """
     if not isinstance(poly, list) or len(poly) == 0 \
             or not all(isinstance(c, (int, float)) for c in poly):
         return None
