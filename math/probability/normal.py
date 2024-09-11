@@ -5,39 +5,33 @@
 
 class Normal:
     """Represents a normal distribution"""
+
     def __init__(self, data=None, mean=0., stddev=1.):
         """
-        Initializes the Normal distribution
-        with given data, mean, or standard deviation.
+        Initializes the Normal distribution with given data, mean, or standard deviation.
 
         Parameters:
-        - data (list, optional): List of data
-            points to estimate mean and stddev.
+        - data (list, optional): List of data points to estimate mean and stddev.
         - mean (float): Mean of the distribution.
         - stddev (float): Standard deviation of the distribution.
 
         Raises:
         - TypeError: If data is not a list.
-        - ValueError: If stddev is not positive or
-            if data contains fewer than two points.
+        - ValueError: If stddev is not positive or if data contains fewer than two points.
         """
         if data is None:
-            # Use given mean and stddev
             if stddev <= 0:
                 raise ValueError("stddev must be a positive value")
             self.mean = float(mean)
             self.stddev = float(stddev)
         else:
-            # Validate data
             if not isinstance(data, list):
                 raise TypeError("data must be a list")
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
 
-            # Calculate mean and standard deviation from data
-            self.mean = float(sum(data) / len(data))
-            variance = sum((x - self.mean) ** 2 for x in data) / len(data)
-            self.stddev = float(variance ** 0.5)
+            self.mean = sum(data) / len(data)
+            self.stddev = (sum((x - self.mean) ** 2 for x in data) / len(data)) ** 0.5
 
     def z_score(self, x):
         """
@@ -49,7 +43,6 @@ class Normal:
         Returns:
         - float: The z-score of the x-value.
         """
-
         return (x - self.mean) / self.stddev
 
     def x_value(self, z):
@@ -64,49 +57,6 @@ class Normal:
         """
         return self.mean + z * self.stddev
 
-    def cdf(self, x):
-        """
-        Calculates the CDF value for a given x-value.
-
-        Parameters:
-        - x (float): The x-value.
-
-        Returns:
-        - float: The CDF value for x.
-        """
-        z = (x - self.mean) / (self.stddev * (2 ** 0.5))
-        return 0.5 * (1 + self.erf(z))
-
-    def erf(self, z):
-        """
-        Approximate the error function (erf) for the CDF
-        calculation using the Abramowitz and Stegun approximation.
-
-        Parameters:
-        - z (float): The z-score.
-
-        Returns:
-        - float: The approximate value of erf(z).
-        """
-        # Abramowitz and Stegun approximation constants
-        a1 = 0.254829592
-        a2 = -0.284496736
-        a3 = 1.421413741
-        a4 = -1.453152027
-        a5 = 1.061405429
-        p = 0.3275911
-
-        # Save the sign of z
-        sign = 1 if z >= 0 else -1
-        z = abs(z)
-
-        # Abramowitz and Stegun formula
-        t = 1.0 / (1.0 + p * z)
-        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1)\
-            * t * self.exp(-z * z)
-
-        return sign * y
-
     def pdf(self, x):
         """
         Calculates the value of the PDF for a given x-value.
@@ -117,19 +67,56 @@ class Normal:
         Returns:
         - float: The PDF value for x.
         """
-        # Approximate value of pi
-        pi = 3.141592653589793
-
-        # Calculate exponent part
+        pi = 3.1415926536
+        e = 2.7182818285
+        coefficient = 1 / (self.stddev * (2 * pi) ** 0.5)
         exponent = -0.5 * ((x - self.mean) / self.stddev) ** 2
+        return coefficient * (e ** exponent)
 
-        # Return the PDF value
-        return (1 / (self.stddev * (2 * pi) ** 0.5)) * self.exp(exponent)
+    def cdf(self, x):
+        """
+        Calculates the value of the CDF for a given x-value.
+
+        Parameters:
+        - x (float): The x-value.
+
+        Returns:
+        - float: The CDF value for x.
+        """
+        z = (x - self.mean) / (self.stddev * (2 ** 0.5))
+        return (1 + self.erf(z)) / 2
+
+    def erf(self, x):
+        """
+        Approximates the error function.
+
+        Parameters:
+        - x (float): The input value.
+
+        Returns:
+        - float: The approximated error function value.
+        """
+        # Constants for the approximation
+        a1 = 0.254829592
+        a2 = -0.284496736
+        a3 = 1.421413741
+        a4 = -1.453152027
+        a5 = 1.061405429
+        p = 0.3275911
+
+        # Save the sign of x
+        sign = 1 if x >= 0 else -1
+        x = abs(x)
+
+        # A&S formula 7.1.26
+        t = 1.0 / (1.0 + p * x)
+        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * self.exp(-x * x)
+
+        return sign * y
 
     def exp(self, x):
         """
-        Helper method to calculate the
-        exponential of x using a Taylor series expansion.
+        Approximates the exponential function.
 
         Parameters:
         - x (float): The exponent.
@@ -137,14 +124,18 @@ class Normal:
         Returns:
         - float: An approximation of e^x.
         """
+
         if x == 0:
             return 1
         elif x < 0:
             return 1 / self.exp(-x)
 
-        result = 1
-        term = 1
-        for i in range(1, 1000):
+        n = 1000  # Number of terms in the series
+        result = 1.0
+        term = 1.0
+        for i in range(1, n):
             term *= x / i
             result += term
+            if abs(term) < 1e-15:
+                break
         return result
