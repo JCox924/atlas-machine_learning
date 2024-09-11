@@ -43,7 +43,7 @@ class Exponential:
         """
         if x < 0:
             return 0
-        return self.lambtha * self.exp(-self.lambtha * x)
+        return float(self.lambtha * self.exp(-self.lambtha * x))
 
     def cdf(self, x):
         """
@@ -58,7 +58,7 @@ class Exponential:
         if x < 0:
             return 0
         # CDF formula for exponential distribution: 1 - e^(-lambtha * x)
-        return 1 - self.exp(-self.lambtha * x)
+        return float(1 - self.exp(-self.lambtha * x))
 
     def exp(self, x):
         """
