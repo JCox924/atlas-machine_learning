@@ -3,6 +3,7 @@
 This module contains the class Poisson
 """
 
+
 class Poisson:
     def __init__(self, data=None, lambtha=1.):
         """
