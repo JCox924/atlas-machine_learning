@@ -91,32 +91,26 @@ class Normal:
 
     def erf(self, x):
         """
-        Approximates the error function.
+        Approximate the error function (erf) for the CDF calculation using the given Taylor series expansion.
 
         Parameters:
-        - x (float): The input value.
+        - x (float): The x-value.
 
         Returns:
-        - float: The approximated error function value.
+        - float: The approximate value of erf(x).
         """
-        # Constants for the approximation
-        a1 = 0.254829592
-        a2 = -0.284496736
-        a3 = 1.421413741
-        a4 = -1.453152027
-        a5 = 1.061405429
-        p = 0.3275911
+        pi = 3.1415926536
 
-        # Save the sign of x
-        sign = 1 if x >= 0 else -1
-        x = abs(x)
+        term1 = x
+        term2 = -(x ** 3) / 3
+        term3 = (x ** 5) / 10
+        term4 = -(x ** 7) / 42
+        term5 = (x ** 9) / 216
 
-        # A&S formula 7.1.26
-        t = 1.0 / (1.0 + p * x)
-        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2)
-                   * t + a1) * t * self.exp(-x * x)
+        # Sum the series
+        erf_approx = (2 / (pi ** 0.5)) * (term1 + term2 + term3 + term4 + term5)
 
-        return sign * y
+        return erf_approx
 
     def exp(self, x):
         """
