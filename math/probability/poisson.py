@@ -55,6 +55,11 @@ class Poisson:
         A helper method to calculate an approximation of e^x without math.
         Uses a basic Taylor series expansion for e^x.
         """
+        if x == 0:
+            return 1
+        elif x < 0:
+            return 1 / self.exp(-x)
+
         result = 1
         term = 1
         for i in range(1, 1000):
