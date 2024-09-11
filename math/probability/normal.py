@@ -79,7 +79,7 @@ class Normal:
 
     def erf(self, z):
         """
-        Approximate the error function (erf) for the CDF calculation using a Taylor series.
+        Approximate the error function (erf) for the CDF calculation using the Abramowitz and Stegun approximation.
 
         Parameters:
         - z (float): The z-score.
@@ -87,14 +87,23 @@ class Normal:
         Returns:
         - float: The approximate value of erf(z).
         """
-        # Use a reasonable number of terms in the Taylor series for erf approximation
-        result = 0
-        term = z
-        z_squared = z * z
-        for n in range(1, 100, 2):  # Iterate over odd terms for the series
-            result += term / n
-            term *= -z_squared
-        return (2 / (3.141592653589793 ** 0.5)) * result
+        # Abramowitz and Stegun approximation constants
+        a1 = 0.254829592
+        a2 = -0.284496736
+        a3 = 1.421413741
+        a4 = -1.453152027
+        a5 = 1.061405429
+        p = 0.3275911
+
+        # Save the sign of z
+        sign = 1 if z >= 0 else -1
+        z = abs(z)
+
+        # Abramowitz and Stegun formula
+        t = 1.0 / (1.0 + p * z)
+        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * self.exp(-z * z)
+
+        return sign * y
 
     def pdf(self, x):
         """
