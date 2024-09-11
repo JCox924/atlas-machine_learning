@@ -9,10 +9,16 @@ class Poisson:
         """
         Initializes the Poisson distribution with given data or lambtha.
 
-        Parameters:
+        :Args:
         - data (list): List of data points to estimate lambtha.
         - lambtha (float): Expected number of
         occurrences in a given time frame.
+
+        :Methods:
+        - factorial
+        - exp
+        - pmf
+        - cdf
 
         Raises:
         - TypeError: If data is not a list.
