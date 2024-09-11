@@ -8,16 +8,19 @@ class Normal:
 
     def __init__(self, data=None, mean=0., stddev=1.):
         """
-        Initializes the Normal distribution with given data, mean, or standard deviation.
+        Initializes the Normal distribution
+        with given data, mean, or standard deviation.
 
         Parameters:
-        - data (list, optional): List of data points to estimate mean and stddev.
+        - data (list, optional): List of data
+            points to estimate mean and stddev.
         - mean (float): Mean of the distribution.
         - stddev (float): Standard deviation of the distribution.
 
         Raises:
         - TypeError: If data is not a list.
-        - ValueError: If stddev is not positive or if data contains fewer than two points.
+        - ValueError: If stddev is not positive
+            or if data contains fewer than two points.
         """
         if data is None:
             if stddev <= 0:
@@ -110,7 +113,8 @@ class Normal:
 
         # A&S formula 7.1.26
         t = 1.0 / (1.0 + p * x)
-        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * self.exp(-x * x)
+        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2)
+                   * t + a1) * t * self.exp(-x * x)
 
         return sign * y
 
