@@ -74,10 +74,7 @@ class Normal:
         Returns:
         - float: The CDF value for x.
         """
-        # Use the correct formula for the z-score
         z = (x - self.mean) / (self.stddev * (2 ** 0.5))
-
-        # Ensure proper application of the erf function
         return 0.5 * (1 + self.erf(z))
 
     def erf(self, z):
