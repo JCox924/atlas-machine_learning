@@ -49,7 +49,9 @@ class Normal:
         Returns:
         - float: The z-score of the x-value.
         """
-        return (x - self.mean) / self.stddev
+
+        z = (x - self.mean) / (self.stddev * (2 ** 0.5))
+        return 0.5 * (1 + self.erf(z))
 
     def x_value(self, z):
         """
@@ -79,7 +81,8 @@ class Normal:
 
     def erf(self, z):
         """
-        Approximate the error function (erf) for the CDF calculation using the Abramowitz and Stegun approximation.
+        Approximate the error function (erf) for the CDF
+        calculation using the Abramowitz and Stegun approximation.
 
         Parameters:
         - z (float): The z-score.
@@ -101,7 +104,8 @@ class Normal:
 
         # Abramowitz and Stegun formula
         t = 1.0 / (1.0 + p * z)
-        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * self.exp(-z * z)
+        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1)\
+            * t * self.exp(-z * z)
 
         return sign * y
 
@@ -126,7 +130,8 @@ class Normal:
 
     def exp(self, x):
         """
-        Helper method to calculate the exponential of x using a Taylor series expansion.
+        Helper method to calculate the
+        exponential of x using a Taylor series expansion.
 
         Parameters:
         - x (float): The exponent.
