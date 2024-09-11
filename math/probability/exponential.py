@@ -78,7 +78,7 @@ class Exponential:
 
         result = 1
         term = 1
-        for i in range(1, 100):
+        for i in range(1, 500):
             term *= x / i
             result += term
         return result
