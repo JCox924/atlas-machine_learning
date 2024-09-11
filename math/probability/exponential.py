@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 class Exponential:
     def __init__(self, data=None, lambtha=1.):
         """
