@@ -16,7 +16,8 @@ class Binomial:
 
         Raises:
         - TypeError: If data is not a list.
-        - ValueError: If n is not a positive value or if p is not between 0 and 1.
+        - ValueError: If n is not a positive
+            value or if p is not between 0 and 1.
         """
         if data is None:
             if n <= 0:
