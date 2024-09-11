@@ -50,8 +50,7 @@ class Normal:
         - float: The z-score of the x-value.
         """
 
-        z = (x - self.mean) / (self.stddev * (2 ** 0.5))
-        return 0.5 * (1 + self.erf(z))
+        return (x - self.mean) / self.stddev
 
     def x_value(self, z):
         """
@@ -75,8 +74,10 @@ class Normal:
         Returns:
         - float: The CDF value for x.
         """
-        # CDF uses the error function approximation
-        z = (x - self.mean) / (self.stddev * 2 ** 0.5)
+        # Use the correct formula for the z-score
+        z = (x - self.mean) / (self.stddev * (2 ** 0.5))
+
+        # Ensure proper application of the erf function
         return 0.5 * (1 + self.erf(z))
 
     def erf(self, z):
