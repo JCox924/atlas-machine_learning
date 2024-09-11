@@ -34,7 +34,8 @@ class Normal:
                 raise ValueError("data must contain multiple values")
 
             self.mean = sum(data) / len(data)
-            self.stddev = (sum((x - self.mean) ** 2 for x in data) / len(data)) ** 0.5
+            self.stddev = (sum((x - self.mean)
+                               ** 2 for x in data) / len(data)) ** 0.5
 
     def z_score(self, x):
         """
@@ -91,7 +92,8 @@ class Normal:
 
     def erf(self, x):
         """
-        Approximate the error function (erf) for the CDF calculation using the given Taylor series expansion.
+        Approximate the error function (erf) for the CDF calculation
+        using the given Taylor series expansion.
 
         Parameters:
         - x (float): The x-value.
@@ -108,7 +110,8 @@ class Normal:
         term5 = (x ** 9) / 216
 
         # Sum the series
-        erf_approx = (2 / (pi ** 0.5)) * (term1 + term2 + term3 + term4 + term5)
+        erf_approx = \
+            (2 / (pi ** 0.5)) * (term1 + term2 + term3 + term4 + term5)
 
         return erf_approx
 
