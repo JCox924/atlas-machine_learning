@@ -11,11 +11,13 @@ class Poisson:
 
         Parameters:
         - data (list): List of data points to estimate lambtha.
-        - lambtha (float): Expected number of occurrences in a given time frame.
+        - lambtha (float): Expected number of
+        occurrences in a given time frame.
 
         Raises:
         - TypeError: If data is not a list.
-        - ValueError: If lambtha is not positive or if data contains fewer than two points.
+        - ValueError: If lambtha is not positive or
+        if data contains fewer than two points.
         """
         if data is None:
             if lambtha <= 0:
@@ -69,7 +71,8 @@ class Poisson:
             return 0
 
         # Calculate PMF using the Poisson formula
-        pmf_value = (self.lambtha ** k) * self.exp(-self.lambtha) / self.factorial(k)
+        pmf_value = \
+            (self.lambtha ** k) * self.exp(-self.lambtha) / self.factorial(k)
         return pmf_value
 
     def cdf(self, k):
