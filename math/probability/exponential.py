@@ -44,9 +44,10 @@ class Exponential:
         Returns:
         - float: The PDF value for the time period 'x'.
         """
+        e = 2.7182818285
         if x < 0:
             return 0
-        return float(self.lambtha * self.exp(-self.lambtha * x))
+        return float(self.lambtha * e ** self.exp(-self.lambtha * x))
 
     def cdf(self, x):
         """
