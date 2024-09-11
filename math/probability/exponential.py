@@ -3,6 +3,7 @@
 This module contains the class Exponential
 """
 
+
 class Exponential:
     def __init__(self, data=None, lambtha=1.):
         """
@@ -70,9 +71,14 @@ class Exponential:
         Returns:
         - float: An approximation of e^x.
         """
+        if x == 0:
+            return 1
+        elif x < 0:
+            return 1 / self.exp(-x)
+
         result = 1
         term = 1
-        for i in range(1, 1000):
+        for i in range(1, 100):
             term *= x / i
             result += term
         return result
