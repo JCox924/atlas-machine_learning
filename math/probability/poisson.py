@@ -82,7 +82,7 @@ class Poisson:
         # Calculate PMF using the Poisson formula
         pmf_value = \
             (self.lambtha ** k) * self.exp(-self.lambtha) / self.factorial(k)
-        return pmf_value
+        return round(pmf_value, 10)
 
     def cdf(self, k):
         """
@@ -102,4 +102,4 @@ class Poisson:
         cdf_value = 0
         for i in range(0, k + 1):
             cdf_value += self.pmf(i)
-        return cdf_value
+        return round(cdf_value, 10)
