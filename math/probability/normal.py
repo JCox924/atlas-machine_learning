@@ -134,9 +134,15 @@ class Normal:
         Returns:
         - float: An approximation of e^x.
         """
+        if x == 0:
+            return 1
+        elif x < 0:
+            return 1 / self.exp(-x)
+
         result = 1
         term = 1
         for i in range(1, 100):
             term *= x / i
             result += term
         return result
+
