@@ -5,6 +5,9 @@ This module contains the class Poisson
 
 
 class Poisson:
+
+    """Represents a poisson distribution"""
+
     def __init__(self, data=None, lambtha=1.):
         """
         Initializes the Poisson distribution with given data or lambtha.
@@ -54,7 +57,7 @@ class Poisson:
         """
         result = 1
         term = 1
-        for i in range(1, 20):
+        for i in range(1, 50):
             term *= x / i
             result += term
         return result
