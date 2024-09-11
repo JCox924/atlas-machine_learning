@@ -47,7 +47,7 @@ class Exponential:
         e = 2.7182818285
         if x < 0:
             return 0
-        return float(self.lambtha * e ** self.exp(-self.lambtha * x))
+        return float(self.lambtha * e ** (-self.lambtha * x))
 
     def cdf(self, x):
         """
