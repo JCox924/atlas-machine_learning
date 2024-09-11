@@ -14,7 +14,8 @@ class Exponential:
 
         Raises:
         - TypeError: If data is not a list.
-        - ValueError: If lambtha is not positive or if data contains fewer than two points.
+        - ValueError: If lambtha is not positive
+            or if data contains fewer than two points.
         """
         if data is None:
             if lambtha <= 0:
@@ -69,7 +70,7 @@ class Exponential:
         """
         result = 1
         term = 1
-        for i in range(1, 100):  # Using 100 terms for a reasonable approximation
+        for i in range(1, 100):
             term *= x / i
             result += term
         return result
