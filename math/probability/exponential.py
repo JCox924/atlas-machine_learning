@@ -5,6 +5,9 @@ This module contains the class Exponential
 
 
 class Exponential:
+    """
+    This class represents a Exponential distribution
+    """
     def __init__(self, data=None, lambtha=1.):
         """
         Initializes the Exponential distribution with given data or lambtha.

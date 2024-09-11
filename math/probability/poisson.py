@@ -6,7 +6,14 @@ This module contains the class Poisson
 
 class Poisson:
 
-    """Represents a poisson distribution"""
+    """
+    Represents a poisson distribution
+
+    methods:
+    - exp
+    - pdf
+    - cdf
+    """
 
     def __init__(self, data=None, lambtha=1.):
         """
