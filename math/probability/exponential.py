@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-
+"""
+This module contains the class Exponential
+"""
 
 class Exponential:
     def __init__(self, data=None, lambtha=1.):
