@@ -30,7 +30,7 @@ class Poisson:
 
     def factorial(self, n):
         """
-        A helper method to calculate the factorial of a number without importing math.
+        A helper method to calculate the factorial of a number without math.
         """
         if n == 0 or n == 1:
             return 1
@@ -41,7 +41,7 @@ class Poisson:
 
     def exp(self, x):
         """
-        A helper method to calculate an approximation of e^x without importing math.
+        A helper method to calculate an approximation of e^x without math.
         Uses a basic Taylor series expansion for e^x.
         """
         result = 1
