@@ -46,7 +46,7 @@ class Poisson:
         """
         result = 1
         term = 1
-        for i in range(1, 20):  # Limit the series expansion to 20 terms for a reasonable approximation
+        for i in range(1, 20):
             term *= x / i
             result += term
         return result
