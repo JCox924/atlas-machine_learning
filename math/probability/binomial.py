@@ -74,3 +74,24 @@ class Binomial:
         pmf_value = nCk * (self.p ** k) * ((1 - self.p) ** (self.n - k))
 
         return pmf_value
+
+    def cdf(self, k):
+        """
+        Calculates the value of the CDF
+        for a given number of 'successes'.
+
+        Parameters:
+        - k (int): The number of successes.
+
+        Returns:
+        - float: The CDF value for k.
+        """
+
+        k = int(k)
+
+        if k < 0:
+            return 0
+
+        cdf_value = sum(self.pmf(i) for i in range(k + 1))
+
+        return cdf_value
