@@ -87,13 +87,15 @@ class Poisson:
         # Convert k to an integer if it isn't
         k = int(k)
 
+        e = 2.7182818285
+
         # Check if k is valid (k should be non-negative)
         if k < 0:
             return 0
 
         # Calculate PMF using the Poisson formula
         pmf_value = \
-            (self.lambtha ** k) * self.exp(-self.lambtha) / self.factorial(k)
+            (self.lambtha ** k * e ** -self.lambtha) / self.factorial(k)
         return round(pmf_value, 10)
 
     def cdf(self, k):
