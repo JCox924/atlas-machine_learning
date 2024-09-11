@@ -146,8 +146,7 @@ class Normal:
 
         result = 1
         term = 1
-        for i in range(1, 100):
+        for i in range(1, 1000):
             term *= x / i
             result += term
         return result
-
