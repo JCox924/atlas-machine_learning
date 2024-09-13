@@ -52,7 +52,8 @@ class Neuron:
         """
         Perform forward propagation.
         Parameters:
-            X (numpy.ndarray): The input data of shape (nx, m) where nx is number of features and m is the number of examples.
+            X (numpy.ndarray): The input data of shape (nx, m)
+            where nx is number of features and m is the number of examples.
         Returns:
             numpy.ndarray: The activated output of the neuron (self.__A)
         """
