@@ -46,7 +46,6 @@ class Neuron:
     def A(self):
         return self.__A
 
-
     def forward_prop(self, X):
 
         """
