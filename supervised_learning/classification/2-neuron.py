@@ -47,18 +47,18 @@ class Neuron:
         return self.__A
 
 
-def forward_prop(self, X):
+    def forward_prop(self, X):
 
-    """
-    Perform forward propagation.
-    Parameters:
-        X (numpy.ndarray): The input data of shape (nx, m) where nx is number of features and m is the number of examples.
-    Returns:
-        numpy.ndarray: The activated output of the neuron (self.__A)
-    """
+        """
+        Perform forward propagation.
+        Parameters:
+            X (numpy.ndarray): The input data of shape (nx, m) where nx is number of features and m is the number of examples.
+        Returns:
+            numpy.ndarray: The activated output of the neuron (self.__A)
+        """
 
-    z = np.dot(self.__W, X) + self.__b
+        z = np.dot(self.__W, X) + self.__b
 
-    self.__A = 1 / (1 + np.exp(-z))
+        self.__A = 1 / (1 + np.exp(-z))
 
-    return self.__A
+        return self.__A
