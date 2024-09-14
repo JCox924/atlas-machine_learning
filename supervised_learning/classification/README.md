@@ -69,6 +69,10 @@ python main.py
 ## Files
 ### 0. **0-neuron.py**
 ![neuron](../../math/imgs/neural_network.png)
+### 1. **1-neuron.py**
+
+### 2. **2-neuron.py**
+![figure 1.2](../../math/imgs/forward_prop.svg)
 
 
 ## Contributing
