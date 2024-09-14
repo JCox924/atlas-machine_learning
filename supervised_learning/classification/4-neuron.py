@@ -80,7 +80,6 @@ class Neuron:
 
     def evaluate(self, Y, A):
 
-
         """
         Evaluate the neuron’s predictions.
         Parameters:
@@ -89,6 +88,8 @@ class Neuron:
         Returns:
             tuple: The neuron's prediction and the cost.
         """
-        predictions = np.where(A >= 0.5, 1, 0)
-        cost = self.cost(Y, A)
-        return predictions, cost
+
+        m = Y.shape[1]
+        A = np.clip(A, 1e-10, 1 - 1e-10)
+        cost = -1 / m * np.sum(Y * np.log(A) + (1 - Y) * np.log(1 - A))
+        return cost
