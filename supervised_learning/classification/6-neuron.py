@@ -142,7 +142,8 @@ class Neuron:
         Updates:
             __W (numpy.ndarray): The weights of the neuron after training
             __b (float): The bias of the neuron after training
-            __A (numpy.ndarray): The activated output of the neuron after training
+            __A (numpy.ndarray): The activated
+                output of the neuron after training
 
         Returns:
             tuple: The evaluation of the training
