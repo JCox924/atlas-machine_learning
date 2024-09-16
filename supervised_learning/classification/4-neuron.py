@@ -78,7 +78,7 @@ class Neuron:
         cost = -1 / m * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
         return cost
 
-    def evaluate(self, Y, A):
+    def evaluate(self, X, Y):
 
         """
         Evaluate the neuron’s predictions.
@@ -89,6 +89,7 @@ class Neuron:
             tuple: The neuron's prediction and the cost.
         """
 
-        predictions = np.where(A >= 0.5, 1, 0)
+        A = self.forward_prop(X)
         cost = self.cost(Y, A)
-        return predictions, cost
+        Y_pred = np.where(A >= 0.5, 1, 0)
+        return Y_pred, cost
