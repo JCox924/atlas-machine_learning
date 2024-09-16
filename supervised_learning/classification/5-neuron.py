@@ -104,12 +104,15 @@ class Neuron:
                     - nx: number of input features
                     - m: number of examples
                 Y (numpy.ndarray): Correct labels of shape (1, m)
-                A (numpy.ndarray): Activated output of the neuron for each example of shape (1, m)
+                A (numpy.ndarray): Activated output of the
+                    neuron for each example of shape (1, m)
                 alpha (float): Learning rate
 
             Updates:
-                __W (numpy.ndarray): The weights of the neuron after gradient descent
-                __b (float): The bias of the neuron after gradient descent
+                __W (numpy.ndarray): The weights of
+                    the neuron after gradient descent
+                __b (float): The bias of the neuron
+                    after gradient descent
             """
 
         m = Y.shape[1]
