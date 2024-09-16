@@ -83,8 +83,8 @@ class Neuron:
         """
         Evaluate the neuron’s predictions.
         Parameters:
-            Y (numpy.ndarray): True labels of shape (1, m)
-            A (numpy.ndarray): Activated output of shape (1, m)
+            X (numpy.ndarray): Input labels of shape (nx, m)
+            Y (numpy.ndarray): True output of shape (1, m)
         Returns:
             tuple: The neuron's prediction and the cost.
         """
@@ -113,8 +113,9 @@ class Neuron:
             """
 
         m = Y.shape[1]
-        dW = (1 / m) * np.dot(X, (A - Y).T)
-        db = (1 / m) * np.sum(A - Y)
+        dZ = A - Y
+        dW = (1 / m) * np.dot(dZ, X.T)
+        db = (1 / m) * np.sum(dZ)
 
         self.__W -= alpha * dW
         self.__b -= alpha * db
