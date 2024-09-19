@@ -113,28 +113,49 @@ class DeepNeuralNetwork:
                 A_prev_prev = cache['A' + str(i - 1)]
                 dZ = np.dot(W.T, dZ) * self.sigmoid_derivative(A_prev_prev)
 
-    def train(self, X, Y, iterations=5000, alpha=0.05):
+    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
         """
         Trains the neural network
         X: numpy.ndarray of shape (nx, m) containing the input data
         Y: numpy.ndarray of shape (1, m) containing the correct labels
         iterations: number of iterations to train over
         alpha: learning rate
-        Returns the evaluation of the training data
-         after iterations of training
+        verbose: if True, prints cost every step iterations
+        graph: if True, plots the cost after training
+        step: steps for printing and graphing
         """
         if not isinstance(iterations, int):
             raise TypeError("iterations must be an integer")
         if iterations < 1:
             raise ValueError("iterations must be a positive integer")
-        if not isinstance(alpha, (float, int)):
+        if not isinstance(alpha, float):
             raise TypeError("alpha must be a float")
         if alpha <= 0:
             raise ValueError("alpha must be positive")
+        if verbose or graph:
+            if not isinstance(step, int):
+                raise TypeError("step must be an integer")
+            if step <= 0 or step > iterations:
+                raise ValueError("step must be positive and <= iterations")
 
-        for _ in range(iterations):
-            A, _ = self.forward_prop(X)
-            self.gradient_descent(Y, alpha)
+        costs = []
+
+        for i in range(iterations + 1):
+            A1, A2 = self.forward_prop(X)
+            self.gradient_descent(X, Y, A1, A2, alpha)
+
+            if i % step == 0 or i == 0 or i == iterations:
+                cost = self.cost(Y, A2)
+                costs.append(cost)
+                if verbose:
+                    print(f"Cost after {i} iterations: {cost}")
+
+        if graph:
+            plt.plot(np.arange(0, iterations + 1, step), costs, 'b-')
+            plt.xlabel('iteration')
+            plt.ylabel('cost')
+            plt.title('Training Cost')
+            plt.show()
 
         return self.evaluate(X, Y)
 
