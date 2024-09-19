@@ -8,7 +8,8 @@ def one_hot_encode(Y, classes):
     Converts a numeric label vector into a one-hot matrix
     Y: numpy.ndarray of shape (m,) containing numeric class labels
     classes: maximum number of classes found in Y
-    Returns: a one-hot encoding of Y with shape (classes, m), or None on failure
+    Returns: a one-hot encoding of Y with
+     shape (classes, m), or None on failure
     """
     if not isinstance(Y, np.ndarray) or not isinstance(classes, int):
         return None
