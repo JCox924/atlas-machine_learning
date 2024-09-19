@@ -2,6 +2,7 @@
 """Module contains class NeuralNetwork"""
 import numpy as np
 
+
 class NeuralNetwork:
     def __init__(self, nx, nodes):
         """

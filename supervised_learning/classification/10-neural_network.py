@@ -5,6 +5,7 @@ import numpy as np
 
 
 class NeuralNetwork:
+    """NeuralNetwork class"""
     def __init__(self, nx, nodes):
         """
         Initialize the neural network

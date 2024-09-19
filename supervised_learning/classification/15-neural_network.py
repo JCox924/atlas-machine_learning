@@ -86,7 +86,8 @@ class NeuralNetwork:
         Returns the cost
         """
         m = Y.shape[1]
-        cost = -(1 / m) * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
+        cost = -(1 / m) * np.sum(Y * np.log(A) + (1 - Y)
+                                 * np.log(1.0000001 - A))
         return cost
 
     def evaluate(self, X, Y):
@@ -109,8 +110,10 @@ class NeuralNetwork:
         Performs one pass of gradient descent on the neural network
         X: numpy.ndarray of shape (nx, m) containing the input data
         Y: numpy.ndarray of shape (1, m) containing the correct labels
-        A1: numpy.ndarray of shape (nodes, m) containing the hidden layer's activated output
-        A2: numpy.ndarray of shape (1, m) containing the output layer's activated output
+        A1: numpy.ndarray of shape (nodes, m) containing
+         the hidden layer's activated output
+        A2: numpy.ndarray of shape (1, m) containing
+         the output layer's activated output
         alpha: learning rate
         """
         m = Y.shape[1]
