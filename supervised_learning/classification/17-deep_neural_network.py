@@ -33,8 +33,9 @@ class DeepNeuralNetwork:
 
         for i in range(1, self.L + 1):
             if i == 1:
-                self.__weights['W' + str(i)] = (np.random.randn(layers[i - 1], nx)
-                                                * np.sqrt(2 / nx))
+                self.__weights['W' + str(i)] = \
+                    (np.random.randn(layers[i - 1], nx)
+                     * np.sqrt(2 / nx))
             else:
                 self.__weights['W' + str(i)] = (
                         np.random.randn(layers[i - 1], layers[i - 2])

@@ -35,7 +35,7 @@ class DeepNeuralNetwork:
             if i == 1:
                 self.__weights['W' + str(i)] = \
                     (np.random.randn(layers[i - 1], nx)
-                                                * np.sqrt(2 / nx))
+                     * np.sqrt(2 / nx))
             else:
                 self.__weights['W' + str(i)] = (
                         np.random.randn(layers[i - 1], layers[i - 2])
@@ -90,5 +90,6 @@ class DeepNeuralNetwork:
         Returns the cost
         """
         m = Y.shape[1]
-        cost = -(1 / m) * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
+        cost = -(1 / m) * np.sum(Y * np.log(A) + (1 - Y)
+                                 * np.log(1.0000001 - A))
         return cost
