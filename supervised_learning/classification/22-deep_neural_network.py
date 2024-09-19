@@ -113,14 +113,15 @@ class DeepNeuralNetwork:
         dW2 = (1 / m) * np.dot(dZ2, A1.T)
         db2 = (1 / m) * np.sum(dZ2, axis=1, keepdims=True)
 
-        dZ1 = np.dot(self.__W2.T, dZ2) * A1 * (1 - A1)
+        W2 = self.__weights['W2']
+        dZ1 = np.dot(W2.T, dZ2) * A1 * (1 - A1)
         dW1 = (1 / m) * np.dot(dZ1, X.T)
         db1 = (1 / m) * np.sum(dZ1, axis=1, keepdims=True)
 
-        self.__W2 -= alpha * dW2
-        self.__b2 -= alpha * db2
-        self.__W1 -= alpha * dW1
-        self.__b1 -= alpha * db1
+        self.__weights['W2'] -= alpha * dW2
+        self.__weights['b2'] -= alpha * db2
+        self.__weights['W1'] -= alpha * dW1
+        self.__weights['b1'] -= alpha * db1
 
     def train(self, X, Y, iterations=5000, alpha=0.05):
         """
