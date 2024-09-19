@@ -24,20 +24,24 @@ class DeepNeuralNetwork:
 
         layers_arr = np.array(layers)
 
-        if not np.issubdtype(layers_arr.dtype, np.integer) or np.any(layers_arr <= 0):
+        if (not np.issubdtype(layers_arr.dtype, np.integer)
+                or np.any(layers_arr <= 0)):
             raise TypeError("layers must be a list of positive integers")
 
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
 
-        for l in range(1, self.L + 1):
-            if l == 1:
-                self.__weights['W' + str(l)] = np.random.randn(layers[l - 1], nx) * np.sqrt(2 / nx)
+        for i in range(1, self.L + 1):
+            if i == 1:
+                self.__weights['W' + str(i)] = (
+                        np.random.randn(layers[i - 1], nx)
+                        * np.sqrt(2 / nx))
             else:
-                self.__weights['W' + str(l)] = (
-                        np.random.randn(layers[l - 1], layers[l - 2]) * np.sqrt(2 / layers[l - 2]))
-            self.__weights['b' + str(l)] = np.zeros((layers[l - 1], 1))
+                self.__weights['W' + str(i)] = (
+                        np.random.randn(layers[i - 1], layers[i - 2])
+                        * np.sqrt(2 / layers[i - 2]))
+            self.__weights['b' + str(i)] = np.zeros((layers[i - 1], 1))
 
     @property
     def L(self):
@@ -67,15 +71,15 @@ class DeepNeuralNetwork:
         """
         self.__cache['A0'] = X
 
-        for l in range(1, self.__L + 1):
-            W = self.__weights['W' + str(l)]
-            b = self.__weights['b' + str(l)]
-            A_prev = self.__cache['A' + str(l - 1)]
+        for i in range(1, self.__L + 1):
+            W = self.__weights['W' + str(i)]
+            b = self.__weights['b' + str(i)]
+            A_prev = self.__cache['A' + str(i - 1)]
 
             Z = np.dot(W, A_prev) + b
             A = self.sigmoid(Z)
 
-            self.__cache['A' + str(l)] = A
+            self.__cache['A' + str(i)] = A
 
         return A, self.__cache
 
@@ -87,7 +91,8 @@ class DeepNeuralNetwork:
         Returns the cost
         """
         m = Y.shape[1]
-        cost = -(1 / m) * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
+        cost = -(1 / m) * np.sum(Y * np.log(A) + (1 - Y)
+                                 * np.log(1.0000001 - A))
         return cost
 
     def evaluate(self, X, Y):
@@ -110,8 +115,10 @@ class DeepNeuralNetwork:
         Performs one pass of gradient descent on the neural network
         X: numpy.ndarray of shape (nx, m) containing the input data
         Y: numpy.ndarray of shape (1, m) containing the correct labels
-        A1: numpy.ndarray of shape (nodes, m) containing the hidden layer's activated output
-        A2: numpy.ndarray of shape (1, m) containing the output layer's activated output
+        A1: numpy.ndarray of shape (nodes, m)
+         containing the hidden layer's activated output
+        A2: numpy.ndarray of shape (1, m)
+         containing the output layer's activated output
         alpha: learning rate
         """
         m = Y.shape[1]

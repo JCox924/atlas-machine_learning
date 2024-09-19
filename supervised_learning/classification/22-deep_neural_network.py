@@ -4,6 +4,7 @@ import numpy as np
 
 
 class DeepNeuralNetwork:
+    """Deep Neural Network Class"""
     def __init__(self, nx, layers):
         """
         Initializes the deep neural network
@@ -121,14 +122,14 @@ class DeepNeuralNetwork:
         """
         m = Y.shape[1]
 
-        dZ2 = A2 - Y  # Shape: (1, m)
-        dW2 = (1 / m) * np.dot(dZ2, A1.T)  # Shape: (1, nodes_in_hidden_layer)
-        db2 = (1 / m) * np.sum(dZ2, axis=1, keepdims=True)  # Shape: (1, 1)
+        dZ2 = A2 - Y
+        dW2 = (1 / m) * np.dot(dZ2, A1.T)
+        db2 = (1 / m) * np.sum(dZ2, axis=1, keepdims=True)
 
-        W2 = self.__weights['W2']  # Shape: (1, nodes_in_hidden_layer)
-        dZ1 = np.dot(W2.T, dZ2) * A1 * (1 - A1)  # Shape: (nodes_in_hidden_layer, m)
-        dW1 = (1 / m) * np.dot(dZ1, X.T)  # Shape: (nodes_in_hidden_layer, nx)
-        db1 = (1 / m) * np.sum(dZ1, axis=1, keepdims=True)  # Shape: (nodes_in_hidden_layer, 1)
+        W2 = self.__weights['W2']
+        dZ1 = np.dot(W2.T, dZ2) * A1 * (1 - A1)
+        dW1 = (1 / m) * np.dot(dZ1, X.T)
+        db1 = (1 / m) * np.sum(dZ1, axis=1, keepdims=True)
 
         self.__weights['W2'] -= alpha * dW2
         self.__weights['b2'] -= alpha * db2
@@ -142,7 +143,8 @@ class DeepNeuralNetwork:
         Y: numpy.ndarray of shape (1, m) containing the correct labels
         iterations: number of iterations to train over
         alpha: learning rate
-        Returns the evaluation of the training data after iterations of training
+        Returns the evaluation of the training
+        data after iterations of training
         """
         if not isinstance(iterations, int):
             raise TypeError("iterations must be an integer")

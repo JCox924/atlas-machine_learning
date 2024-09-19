@@ -4,6 +4,7 @@ import numpy as np
 
 
 class DeepNeuralNetwork:
+    """Neural network for classification"""
     def __init__(self, nx, layers):
         """
         Initializes the deep neural network
