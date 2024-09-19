@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Module contains class DeepNeuralNetwork with save and load methods"""
 import numpy as np
+import matplotlib.pyplot as plt
 import pickle
 
 
@@ -91,27 +92,31 @@ class DeepNeuralNetwork:
         cost = self.cost(Y, A)
         return prediction, cost
 
-    def gradient_descent(self, Y, alpha=0.05):
-        """Backward propagation without loops (unrolled for specific layers)"""
+    def gradient_descent(self, X, Y, A1, A2, alpha=0.05):
+        """
+        Performs one pass of gradient descent on the neural network
+        X: numpy.ndarray of shape (nx, m) containing the input data
+        Y: numpy.ndarray of shape (1, m) containing the correct labels
+        A1: numpy.ndarray of shape (nodes, m)
+         containing the hidden layer's activated output
+        A2: numpy.ndarray of shape (1, m)
+         containing the output layer's activated output
+        alpha: learning rate
+        """
         m = Y.shape[1]
-        weights = self.weights
-        cache = self.cache
-        L = self.L
 
-        A_final = cache['A' + str(L)]
-        dZ = A_final - Y
+        dZ2 = A2 - Y
+        dW2 = (1 / m) * np.dot(dZ2, A1.T)
+        db2 = (1 / m) * np.sum(dZ2, axis=1, keepdims=True)
 
-        for i in reversed(range(1, L + 1)):
-            A_prev = cache['A' + str(i - 1)]
-            W = weights['W' + str(i)]
-            dW = (1 / m) * np.dot(dZ, A_prev.T)
-            db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
-            weights['W' + str(i)] -= alpha * dW
-            weights['b' + str(i)] -= alpha * db
+        dZ1 = np.dot(self.__W2.T, dZ2) * A1 * (1 - A1)
+        dW1 = (1 / m) * np.dot(dZ1, X.T)
+        db1 = (1 / m) * np.sum(dZ1, axis=1, keepdims=True)
 
-            if i > 1:
-                A_prev_prev = cache['A' + str(i - 1)]
-                dZ = np.dot(W.T, dZ) * self.sigmoid_derivative(A_prev_prev)
+        self.__W2 -= alpha * dW2
+        self.__b2 -= alpha * db2
+        self.__W1 -= alpha * dW1
+        self.__b1 -= alpha * db1
 
     def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
         """
