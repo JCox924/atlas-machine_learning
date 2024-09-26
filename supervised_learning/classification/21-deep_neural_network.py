@@ -99,28 +99,33 @@ class DeepNeuralNetwork:
 
         return prediction, cost
 
-    def gradient_descent(self, X, Y, A1, A2, alpha=0.05):
+    def gradient_descent(self, Y, cache, alpha=0.05):
         """
         Performs one pass of gradient descent on the neural network
-        X: numpy.ndarray of shape (nx, m) containing the input data
-        Y: numpy.ndarray of shape (1, m) containing the correct labels
-        A1: numpy.ndarray of shape (nodes, m)
-            containing the hidden layer's activated output
-        A2: numpy.ndarray of shape (1, m)
-            containing the output layer's activated output
+        Y: numpy.ndarray with shape (1, m) containing correct labels
+        cache: dictionary containing all intermediary values of the network
         alpha: learning rate
+        Updates the private attribute __weights
         """
         m = Y.shape[1]
+        L = self.__L
+        weights = self.__weights
+        A_final = cache['A' + str(L)]
+        dZ_prev = A_final - Y
 
-        dZ2 = A2 - Y
-        dW2 = (1 / m) * np.dot(dZ2, A1.T)
-        db2 = (1 / m) * np.sum(dZ2, axis=1, keepdims=True)
+        for l in reversed(range(1, L + 1)):
+            A_prev = cache['A' + str(l - 1)]
+            W_curr = weights['W' + str(l)]
+            b_curr = weights['b' + str(l)]
 
-        dZ1 = np.dot(self.__W2.T, dZ2) * A1 * (1 - A1)
-        dW1 = (1 / m) * np.dot(dZ1, X.T)
-        db1 = (1 / m) * np.sum(dZ1, axis=1, keepdims=True)
+            dW = (1 / m) * np.dot(dZ_prev, A_prev.T)
+            db = (1 / m) * np.sum(dZ_prev, axis=1, keepdims=True)
 
-        self.__W2 -= alpha * dW2
-        self.__b2 -= alpha * db2
-        self.__W1 -= alpha * dW1
-        self.__b1 -= alpha * db1
+            weights['W' + str(l)] = W_curr - alpha * dW
+            weights['b' + str(l)] = b_curr - alpha * db
+
+            if l > 1:
+                W_next = weights['W' + str(l)]
+                dA_prev = np.dot(W_next.T, dZ_prev)
+                A_prev = cache['A' + str(l - 1)]
+                dZ_prev = dA_prev * (A_prev * (1 - A_prev))
