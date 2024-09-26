@@ -92,10 +92,10 @@ class DeepNeuralNetwork:
         Y: numpy.ndarray of shape (1, m) containing the correct labels
         Returns the predictions and cost of the network
         """
-        A1, A2 = self.forward_prop(X)
+        A, _ = self.forward_prop(X)
 
-        prediction = np.where(A2 >= 0.5, 1, 0)
+        prediction = np.where(A >= 0.5, 1, 0)
 
-        cost = self.cost(Y, A2)
+        cost = self.cost(Y, A)
 
         return prediction, cost
