@@ -111,21 +111,18 @@ class DeepNeuralNetwork:
         L = self.__L
         weights = self.__weights
         A_final = cache['A' + str(L)]
-        dZ_prev = A_final - Y
+        dZ = A_final - Y
 
-        for l in reversed(range(1, L + 1)):
-            A_prev = cache['A' + str(l - 1)]
-            W_curr = weights['W' + str(l)]
-            b_curr = weights['b' + str(l)]
+        for i in reversed(range(1, L + 1)):
+            A_prev = cache['A' + str(i - 1)]
+            W_curr = weights['W' + str(i)]
+            b_curr = weights['b' + str(i)]
 
-            dW = (1 / m) * np.dot(dZ_prev, A_prev.T)
-            db = (1 / m) * np.sum(dZ_prev, axis=1, keepdims=True)
+            dW = (1 / m) * np.dot(dZ, A_prev.T)
+            db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
+            W_next = weights['W' + str(i)]
+            dA_prev = np.dot(W_next.T, dZ)
+            dZ = dA_prev * A_prev * (1 - A_prev)
 
-            weights['W' + str(l)] = W_curr - alpha * dW
-            weights['b' + str(l)] = b_curr - alpha * db
-
-            if l > 1:
-                W_next = weights['W' + str(l)]
-                dA_prev = np.dot(W_next.T, dZ_prev)
-                A_prev = cache['A' + str(l - 1)]
-                dZ_prev = dA_prev * (A_prev * (1 - A_prev))
+            weights['W' + str(i)] = W_curr - alpha * dW
+            weights['b' + str(i)] = b_curr - alpha * db
