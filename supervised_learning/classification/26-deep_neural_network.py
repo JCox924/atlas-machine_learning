@@ -52,19 +52,15 @@ class DeepNeuralNetwork:
         return A * (1 - A)
 
     def forward_prop(self, X):
-        """Forward propagation without loops (unrolled for specific layers)"""
         self.cache['A0'] = X
-
-        # Manually unrolling for layers (adjust if you have more layers)
-        A_prev = X
+        # Perform forward propagation
         for i in range(1, self.L + 1):
             W = self.weights['W' + str(i)]
             b = self.weights['b' + str(i)]
+            A_prev = self.cache['A' + str(i - 1)]
             Z = np.dot(W, A_prev) + b
             A = self.sigmoid(Z)
             self.cache['A' + str(i)] = A
-            A_prev = A
-
         return A, self.cache
 
     def cost(self, Y, A):
@@ -165,8 +161,9 @@ class DeepNeuralNetwork:
         return self.evaluate(X, Y)
 
     def save(self, filename):
+        """Saves the instance object to a file in pickle format"""
         if not isinstance(filename, str):
-            return None
+            return
         if not filename.endswith('.pkl'):
             filename += '.pkl'
         try:
