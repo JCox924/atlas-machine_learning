@@ -52,8 +52,8 @@ class DeepNeuralNetwork:
         return A * (1 - A)
 
     def forward_prop(self, X):
+        """self propagation"""
         self.cache['A0'] = X
-        # Perform forward propagation
         for i in range(1, self.L + 1):
             W = self.weights['W' + str(i)]
             b = self.weights['b' + str(i)]
@@ -84,8 +84,11 @@ class DeepNeuralNetwork:
         Returns the predictions and cost of the network
         """
         A, _ = self.forward_prop(X)
+
         prediction = np.where(A >= 0.5, 1, 0)
+
         cost = self.cost(Y, A)
+
         return prediction, cost
 
     def gradient_descent(self, X, Y, A1, A2, alpha=0.05):

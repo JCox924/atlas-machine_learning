@@ -63,25 +63,16 @@ class DeepNeuralNetwork:
         return 1 / (1 + np.exp(-Z))
 
     def forward_prop(self, X):
-        """
-        Calculates the forward propagation of the deep neural network
-        X: numpy.ndarray of shape (nx, m) containing the input data
-        Updates __cache with the activated outputs
-        Returns the output of the neural network and the cache
-        """
-        self.__cache['A0'] = X  # Save input layer's activations
-
-        for i in range(1, self.__L + 1):
-            W = self.__weights['W' + str(i)]
-            b = self.__weights['b' + str(i)]
-            A_prev = self.__cache['A' + str(i - 1)]
-
+        """self propagation"""
+        self.cache['A0'] = X
+        for i in range(1, self.L + 1):
+            W = self.weights['W' + str(i)]
+            b = self.weights['b' + str(i)]
+            A_prev = self.cache['A' + str(i - 1)]
             Z = np.dot(W, A_prev) + b
             A = self.sigmoid(Z)
-
-            self.__cache['A' + str(i)] = A
-
-        return A, self.__cache
+            self.cache['A' + str(i)] = A
+        return A, self.cache
 
     def cost(self, Y, A):
         """
@@ -101,11 +92,11 @@ class DeepNeuralNetwork:
         Y: numpy.ndarray of shape (1, m) containing the correct labels
         Returns the predictions and cost of the network
         """
-        A1, A2 = self.forward_prop(X)
+        A, _ = self.forward_prop(X)
 
-        prediction = np.where(A2 >= 0.5, 1, 0)
+        prediction = np.where(A >= 0.5, 1, 0)
 
-        cost = self.cost(Y, A2)
+        cost = self.cost(Y, A)
 
         return prediction, cost
 

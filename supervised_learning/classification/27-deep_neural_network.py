@@ -94,12 +94,16 @@ class DeepNeuralNetwork:
     def evaluate(self, X, Y):
         """
         Evaluates the neural network’s predictions
-        X: numpy.ndarray of shape (nx, m)
-        Y: numpy.ndarray of shape (classes, m)
+        X: numpy.ndarray of shape (nx, m) containing the input data
+        Y: numpy.ndarray of shape (1, m) containing the correct labels
+        Returns the predictions and cost of the network
         """
         A, _ = self.forward_prop(X)
-        prediction = np.argmax(A, axis=0).reshape(1, -1)
+
+        prediction = np.where(A >= 0.5, 1, 0)
+
         cost = self.cost(Y, A)
+
         return prediction, cost
 
     def gradient_descent(self, Y, alpha=0.05):
