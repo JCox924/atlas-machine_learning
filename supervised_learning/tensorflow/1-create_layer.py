@@ -28,5 +28,3 @@ def create_layer(prev, n, activation):
             layer = activation(layer)
 
     return layer
-
-    return layer
