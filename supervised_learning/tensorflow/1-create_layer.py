@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import tensorflow.compat.v1 as tf
-
 tf.disable_v2_behavior()
 
 
@@ -24,8 +23,10 @@ def create_layer(prev, n, activation):
 
         layer = tf.matmul(prev, weights) + biases
 
-    if activation is not None:
-        layer = activation(layer)
+        if activation is not None:
+            print(activation.__name__)
+            layer = activation(layer)
 
     return layer
 
+    return layer
