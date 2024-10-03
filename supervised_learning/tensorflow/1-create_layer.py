@@ -19,6 +19,12 @@ def create_layer(prev, n, activation):
 
     initializer = tf.keras.initializers.VarianceScaling(scale=2.0, mode='fan_avg')
 
-    layer = tf.layers.Dense(units=n, activation=activation, kernel_initializer=initializer, name='layer')
+    weights = tf.get_variable("weights", shape=[prev.get_shape().as_list()[1], n], initializer=initializer)
+    biases = tf.get_variable("biases", shape=[n], initializer=tf.zeros_initializer())
 
-    return layer(prev)
+    z = tf.matmul(prev, weights) + biases
+
+    if activation is not None:
+        return activation(z)
+
+    return z
