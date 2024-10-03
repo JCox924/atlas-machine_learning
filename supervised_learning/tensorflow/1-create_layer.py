@@ -18,10 +18,11 @@ def create_layer(prev, n, activation):
     """
     initializer = tf.variance_scaling_initializer(scale=2.0, mode='fan_avg')
 
-    weights = tf.get_variable("weights", shape=[prev.get_shape().as_list()[1], n], initializer=initializer)
-    biases = tf.get_variable("biases", shape=[n], initializer=tf.zeros_initializer())
+    with tf.variable_scope(None, default_name='layer', reuse=tf.AUTO_REUSE):
+        weights = tf.get_variable("weights", shape=[prev.get_shape().as_list()[1], n], initializer=initializer)
+        biases = tf.get_variable("biases", shape=[n], initializer=tf.zeros_initializer())
 
-    layer = tf.matmul(prev, weights) + biases
+        layer = tf.matmul(prev, weights) + biases
 
     if activation is not None:
         layer = activation(layer)
