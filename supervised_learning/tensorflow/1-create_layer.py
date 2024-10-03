@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import tensorflow.compat.v1 as tf
+
 tf.disable_v2_behavior()
 
 
@@ -15,16 +16,7 @@ def create_layer(prev, n, activation):
     Returns:
     tensor output of the created layer
     """
-    tf.set_random_seed(0)
+    initializer = tf.variance_scaling_initializer(mode='fan_avg')
+    layer = tf.layers.Dense(units=n, activation=activation, kernel_initializer=initializer, name='layer')
+    return layer(prev)
 
-    initializer = tf.keras.initializers.VarianceScaling(scale=2.0, mode='fan_avg')
-
-    weights = tf.get_variable("weights", shape=[prev.get_shape().as_list()[1], n], initializer=initializer)
-    biases = tf.get_variable("biases", shape=[n], initializer=tf.zeros_initializer())
-
-    z = tf.matmul(prev, weights) + biases
-
-    if activation is not None:
-        return activation(z)
-
-    return z
