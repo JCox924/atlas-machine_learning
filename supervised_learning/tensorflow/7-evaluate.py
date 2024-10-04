@@ -3,6 +3,7 @@ import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 """module evaluate"""
 
+
 def evaluate(X, Y, save_path):
     """
     Evaluates the output of a neural network.
