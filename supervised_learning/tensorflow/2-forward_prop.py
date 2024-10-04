@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 create_layer = __import__('1-create_layer').create_layer
-
+"""forward propagation for a neural network"""
 
 def forward_prop(x, layer_sizes=[], activations=[]):
     """

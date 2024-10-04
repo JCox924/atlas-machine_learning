@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import tensorflow.compat.v1 as tf
-
 tf.disable_v2_behavior()
+"""create layer module"""
 
 
 def create_layer(prev, n, activation):
@@ -17,6 +17,8 @@ def create_layer(prev, n, activation):
     tensor output of the created layer
     """
     initializer = tf.variance_scaling_initializer(mode='fan_avg')
-    layer = tf.keras.layers.Dense(units=n, activation=activation, kernel_initializer=initializer, name='layer')
+    layer = tf.keras.layers.Dense(units=n,
+                                  activation=activation,
+                                  kernel_initializer=initializer,
+                                  name='layer')
     return layer(prev)
-
