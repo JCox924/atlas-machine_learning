@@ -2,8 +2,6 @@
 import tensorflow as tf
 """
 Module contains:
-    imports:
-        tensorflow as tf
     functions:
         create_RMSProp_op(alpha, beta2, epsilon)
 """
