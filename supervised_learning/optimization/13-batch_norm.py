@@ -22,7 +22,7 @@ def batch_norm(Z, gamma, beta, epsilon):
     """
     mean = np.mean(Z, axis=0)
     std = np.std(Z, axis=0)
-    Z_norm = (Z - mean) / (std + epsilon)
+    Z_norm = (Z - mean) / np.sqrt(std + epsilon)
 
     Z_scaled = gamma * Z_norm + beta
 
