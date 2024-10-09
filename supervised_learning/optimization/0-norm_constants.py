@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-import numpy as np
 """norm_constansts Module contains functions: normalize_constants(X)"""
+import numpy as np
+
 
 
 def normalization_constants(X):

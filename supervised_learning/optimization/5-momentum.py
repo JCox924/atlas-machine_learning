@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Module momentum contains functions: """
+"""Module momentum contains functions: update_variables_momentum"""
 
 
 def update_variables_momentum(alpha, beta1, var, grad, v):

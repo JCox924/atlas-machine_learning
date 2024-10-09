@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-import numpy as np
 """
 Module 13-batch_norm contains functions:
     batch_norm(Z, gamma, beta, epsilon)
 """
+import numpy as np
+
 
 
 def batch_norm(Z, gamma, beta, epsilon):

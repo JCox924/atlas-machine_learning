@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-import tensorflow as tf
 """Module momentum contains functions: create_momentum(alpha, beta1)"""
+import tensorflow as tf
+
 
 
 def create_momentum_op(alpha, beta1):

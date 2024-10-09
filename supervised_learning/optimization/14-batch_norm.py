@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-import tensorflow as tf
 """
 Module 14-batch_norm contains functions:
     create_batch_norm(prev, n, activation)
 """
+import tensorflow as tf
 
 
 def create_batch_norm_layer(prev, n, activation):

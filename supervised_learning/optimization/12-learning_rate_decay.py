@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-import tensorflow as tf
 """
 Module contains:
     functions:
         learning_rate_decay(alpha, decay_rate, decay_step)
 """
+import tensorflow as tf
+
 
 
 def learning_rate_decay(alpha, decay_rate, decay_step):
@@ -13,11 +14,13 @@ def learning_rate_decay(alpha, decay_rate, decay_step):
 
     Args:
         alpha: the original learning rate
-        decay_rate: the weight used to determine the rate at which alpha will decay
+        decay_rate: the weight used to determine
+            the rate at which alpha will decay
         decay_step: the number of passes of gradient descent
             that should occur before alpha is decayed further
     Returns:
-        the learning rate decay operation using TensorFlow's InverseTimeDecay function'
+        the learning rate decay operation
+            using TensorFlow's InverseTimeDecay function
     """
 
     operation = tf.keras.optimizers.schedules.InverseTimeDecay(
