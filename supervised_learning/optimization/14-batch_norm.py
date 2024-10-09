@@ -21,7 +21,8 @@ def create_batch_norm_layer(prev, n, activation):
     d_layer = tf.keras.Dense(
         units=n,
         activation=None,
-        kernel_initializer=initializer
+        kernel_initializer=initializer,
+        use_bias=False
     )(prev)
 
     batch_norm_layer = tf.keras.layers.BatchNormalization(
@@ -30,8 +31,8 @@ def create_batch_norm_layer(prev, n, activation):
         epsilon=1e-7,
         center=True,
         scale=True,
-        beta_initializer='zeros',
-        gamma_initializer='ones'
+        beta_initializer=tf.keras.initializers.Zeros(),
+        gamma_initializer=tf.keras.initializers.Ones()
     )(d_layer)
 
     if activation is not None:
