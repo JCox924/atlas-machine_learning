@@ -3,7 +3,6 @@
 import tensorflow as tf
 
 
-
 def create_momentum_op(alpha, beta1):
     """
     Creates the gradient descent operation using momentum in TensorFlow.

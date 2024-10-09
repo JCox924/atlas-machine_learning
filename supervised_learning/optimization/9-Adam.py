@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-import numpy as np
 """
 Module 9-Adam contains:
     functions:
         update_variables_Adam(alpha, beta1, beta2, epsilon, var,...)
 """
+import numpy as np
 
 
 def update_variables_Adam(alpha, beta1, beta2, epsilon, var, grad, s, v, t):
@@ -24,8 +24,6 @@ def update_variables_Adam(alpha, beta1, beta2, epsilon, var, grad, s, v, t):
         the updated variable, the new first moment,
         and the new second moment
     """
-    grad = np.nan_to_num(grad)
-
     v = beta1 * v + (1 - beta1) * grad
 
     s = beta2 * s + (1 - beta2) * (grad ** 2)
@@ -33,7 +31,6 @@ def update_variables_Adam(alpha, beta1, beta2, epsilon, var, grad, s, v, t):
     v_corrected = v / (1 - beta1 ** t)
 
     s_corrected = s / (1 - beta2 ** t)
-    s_corrected = np.maximum(s_corrected, epsilon)
 
     var = var - alpha * v_corrected / (np.sqrt(s_corrected) + epsilon)
 
