@@ -5,17 +5,17 @@
 def create_mini_batches(X, Y, batch_size):
     """
     Creates mini-batches to be used for training a
-        neural network using mini-batch gradient descent.
+    neural network using mini-batch gradient descent.
 
-    Parameters:
-    - X: Input data of shape, where m is the number of
+    Args:
+        X: Input data of shape, where m is the number of
         data points and nx is the number of features.
-    - Y: Labels of shape, where m is the number of
+        Y: Labels of shape, where m is the number of
         data points and ny is the number of classes for classification tasks.
-    - batch_size: Number of data points in a batch.
+        batch_size: Number of data points in a batch.
 
     Returns:
-    - mini_batches: List of mini-batches,
+        - mini_batches: List of mini-batches,
         each containing a tuple (X_batch, Y_batch).
     """
     shuffle_data = __import__('2-shuffle_data').shuffle_data
