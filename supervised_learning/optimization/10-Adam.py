@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import tensorflow as tf
 """
-Module contains:
+Module 10-Adam contains:
     functions:
         create_Adam_op(alpha, beta1, beta2, epsilon)
 """

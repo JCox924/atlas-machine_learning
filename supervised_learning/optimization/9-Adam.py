@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import numpy as np
 """
-Module contains:
+Module 9-Adam contains:
     functions:
         update_variables_Adam(alpha, beta1, beta2, epsilon, var,...)
 """
