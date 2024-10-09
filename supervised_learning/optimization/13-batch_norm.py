@@ -6,7 +6,6 @@ Module 13-batch_norm contains functions:
 import numpy as np
 
 
-
 def batch_norm(Z, gamma, beta, epsilon):
     """
     Args:
