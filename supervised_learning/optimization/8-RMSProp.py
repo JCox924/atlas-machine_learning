@@ -7,7 +7,6 @@ Module contains:
 import tensorflow as tf
 
 
-
 def create_RMSProp_op(alpha, beta2, epsilon):
     """
     Arg:
