@@ -35,6 +35,7 @@ def create_batch_norm(prev, n, activation):
     )(d_layer)
 
     if activation is not None:
-        return batch_norm_layer
+        output = activation(batch_norm_layer)
     else:
-        return d_layer
+        output = batch_norm_layer
+    return output
