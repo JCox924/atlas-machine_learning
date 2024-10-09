@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+import tensorflow as tf
+"""
+Module 14-batch_norm contains functions:
+    create_batch_norm(prev, n, activation)
+"""
+
+
+def create_batch_norm(prev, n, activation):
+    """
+    Args:
+        prev: the activated output of the previous layer
+        n: the number of nodes in the layer to be created
+        activation: activation function to be used on output layer
+    Returns:
+        tf.keras.layers.BatchNormalization: tensor of the activated output for the layer
+    """
+
+    initializer = tf.keras.initializers.VarianceScaling(mode='fan_avg')
+
+    d_layer = tf.keras.Dense(
+        n,
+        activation=activation,
+        kernel_initializer=initializer
+    )(prev)
+
+    batch_norm_layer = tf.keras.layers.BatchNormalization(
+        axis=-1,
+        momentum=0.99,
+        epsilon=1e-7,
+        center=True,
+        scale=True,
+        beta_initializer='zeros',
+        gamma_initializer='ones'
+    )(d_layer)
+
+    if activation is not None:
+        return batch_norm_layer
+    else:
+        return d_layer
