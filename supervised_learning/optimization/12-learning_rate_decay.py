@@ -7,7 +7,6 @@ Module contains:
 import tensorflow as tf
 
 
-
 def learning_rate_decay(alpha, decay_rate, decay_step):
     """
     Sets up the learning rate decay operation
