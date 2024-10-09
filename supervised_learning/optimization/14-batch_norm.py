@@ -33,7 +33,7 @@ def create_batch_norm_layer(prev, n, activation):
         scale=True,
         beta_initializer=tf.keras.initializers.Zeros(),
         gamma_initializer=tf.keras.initializers.Ones()
-    )(d_layer)
+    )(d_layer, training=False)
 
     if activation is not None:
         output = activation(batch_norm_layer)
