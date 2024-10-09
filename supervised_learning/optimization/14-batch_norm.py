@@ -6,7 +6,7 @@ Module 14-batch_norm contains functions:
 """
 
 
-def create_batch_norm(prev, n, activation):
+def create_batch_norm_layer(prev, n, activation):
     """
     Args:
         prev: the activated output of the previous layer
