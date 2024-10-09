@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import numpy as np
-"""Shuffle data module"""
+"""Shuffle data module contains functions: shuffle_data(X, Y)"""
 
 
 def shuffle_data(X, Y):
