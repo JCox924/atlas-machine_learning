@@ -21,8 +21,8 @@ def batch_norm(Z, gamma, beta, epsilon):
         the normalized Z matrix
     """
     mean = np.mean(Z, axis=0)
-    std = np.std(Z, axis=0)
-    Z_norm = (Z - mean) / np.sqrt(std + epsilon)
+    variance = np.var(Z, axis=0)
+    Z_norm = (Z - mean) / np.sqrt(variance + epsilon)
 
     Z_scaled = gamma * Z_norm + beta
 
