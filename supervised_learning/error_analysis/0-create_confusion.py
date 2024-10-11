@@ -17,7 +17,7 @@ def create_confusion_matrix(labels, logits):
 
     classes = labels.shape[1]
 
-    confusion_matrix = np.zeros((classes, classes), dtype=int)
+    confusion_matrix = np.zeros((classes, classes))
 
     actual = np.argmax(labels, axis=1)
     predictions = np.argmax(logits, axis=1)
