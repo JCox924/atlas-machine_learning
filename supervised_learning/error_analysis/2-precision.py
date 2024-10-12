@@ -14,7 +14,8 @@ def precision(confusion):
                 column indices represent the predicted labels
                 - classes: number of classes
     Returns:
-        numpy.ndarray of shape (classes,) containing the precision of each class
+        numpy.ndarray of shape (classes,)
+            containing the precision of each class
     """
     precision_matrix = np.zeros(confusion.shape[0])
 
