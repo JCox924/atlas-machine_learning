@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-Module 3-precision contains funtions:
+Module 3-precision contains functions:
     specificity(confusion)
 """
+import numpy as np
 
 
 def specificity(confusion):
@@ -15,7 +16,17 @@ def specificity(confusion):
     Returns:
         numpy.ndarray of shape (classes,) containing the specificity of each class
     """
+    specificity_matrix = np.zeros_like(confusion)
+    total = np.sum(confusion)
 
-    specificity_matrix = confusion.astype(float) / confusion.sum(axis=1, keepdims=True)
+    for i in range(confusion.shape[0]):
+
+        true_pos = np.sum(confusion[i][i])
+        false_pos = np.sum(confusion[:, i]) - true_pos
+        false_neg = np.sum(confusion[i, :]) - true_pos
+
+        true_neg = total - (true_pos + false_pos + false_neg)
+
+        specificity_matrix[i] = true_neg / (true_neg + false_pos)
 
     return specificity_matrix
