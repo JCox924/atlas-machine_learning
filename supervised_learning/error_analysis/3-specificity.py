@@ -16,7 +16,7 @@ def specificity(confusion):
     Returns:
         numpy.ndarray of shape (classes,) containing the specificity of each class
     """
-    specificity_matrix = np.zeros_like(confusion)
+    specificity_matrix = np.zeros(confusion.shape[0])
     total = np.sum(confusion)
 
     for i in range(confusion.shape[0]):
