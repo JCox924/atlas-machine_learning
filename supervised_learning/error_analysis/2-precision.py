@@ -16,11 +16,11 @@ def precision(confusion):
     Returns:
         numpy.ndarray of shape (classes,) containing the precision of each class
     """
-    precision_matrix = np.zeros_like(confusion)
+    precision_matrix = np.zeros(confusion.shape[0])
 
     for i in range(confusion.shape[0]):
-        true_pos = np.sum(confusion[i, i])
-        false_pos = np.sum(confusion[:, i])
-        precision_matrix[i, i] = true_pos / (true_pos + false_pos)
+        true_pos = confusion[i, i]
+        false_pos = np.sum(confusion[:, i]) - true_pos
+        precision_matrix[i] = true_pos / (true_pos + false_pos)
 
     return precision_matrix

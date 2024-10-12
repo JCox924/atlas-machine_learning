@@ -21,7 +21,7 @@ def specificity(confusion):
 
     for i in range(confusion.shape[0]):
 
-        true_pos = np.sum(confusion[i][i])
+        true_pos = confusion[i][i]
         false_pos = np.sum(confusion[:, i]) - true_pos
         false_neg = np.sum(confusion[i, :]) - true_pos
 
