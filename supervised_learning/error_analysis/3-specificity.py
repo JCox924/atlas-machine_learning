@@ -14,7 +14,8 @@ def specificity(confusion):
                 column indices represent the predicted labels
                 - classes: number of classes
     Returns:
-        numpy.ndarray of shape (classes,) containing the specificity of each class
+        numpy.ndarray of shape (classes,)
+            containing the specificity of each class
     """
     specificity_matrix = np.zeros(confusion.shape[0])
     total = np.sum(confusion)
