@@ -3,7 +3,6 @@
 Module 2-l2_reg_cost contains functions:
     l2_reg_keras_cost(cost, model)
 """
-import numpy as np
 import tensorflow as tf
 
 
