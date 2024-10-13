@@ -18,8 +18,14 @@ def f1_score(confusion):
     Returns:
         numpy.ndarray of shape (classes) containing the f1 score of each class
     """
-    con = confusion
-    f1_scores = np.zeros(con.shape[0])
-    for i in range(con.shape[0]):
-        f1_scores[i] = 2 * sensitivity(con) * precision(con) / (sensitivity(con) + precision(con))
+    f1_scores = np.zeros(confusion.shape[0])
+    for i in range(confusion.shape[0]):
+        sens = sensitivity(confusion)[i]
+        prec = precision(confusion)[i]
+
+        if prec + sens == 0:
+            f1_scores[i] = 0
+        else:
+            f1_scores[i] = 2 * (prec * sens)/(prec + sens)
+
     return f1_scores
