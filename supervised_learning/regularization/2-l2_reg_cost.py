@@ -28,6 +28,8 @@ def l2_reg_cost(cost, model):
             l2_loss = layer.losses[0]
             l2_losses.append(l2_loss)
 
-    l2_total_cost = cost + tf.add_n(l2_losses)
+    l2_total_cost = tf.add_n(l2_losses)
 
-    return tf.stack([l2_losses[0], l2_losses[1], l2_total_cost])
+    total_cost = cost + l2_total_cost
+
+    return tf.stack([l2_losses[0], l2_losses[1], total_cost])
