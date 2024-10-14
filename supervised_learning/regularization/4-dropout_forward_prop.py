@@ -19,6 +19,7 @@ def dropout_forward_prop(X, weights, L, keep_prob):
     Returns:
         A dictionary containing the outputs of each layer and the dropout mask
     """
+    np.random.seed(0)
     cache = {}
     cache['A0'] = X
 
