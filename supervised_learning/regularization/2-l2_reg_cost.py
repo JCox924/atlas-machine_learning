@@ -23,4 +23,6 @@ def l2_reg_cost(cost, model):
     """
     l2_loss = tf.add_n(model.losses)
 
-    return cost + l2_loss
+    total_cost = cost + l2_loss
+
+    return total_cost
