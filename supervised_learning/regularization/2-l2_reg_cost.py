@@ -6,7 +6,7 @@ Module 2-l2_reg_cost contains functions:
 import tensorflow as tf
 
 
-def l2_reg_keras_cost(cost, model):
+def l2_reg_cost(cost, model):
     """
     Calculates the cost of a neural network with
         L2 regularization using a Keras model.
