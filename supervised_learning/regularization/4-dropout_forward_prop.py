@@ -36,6 +36,8 @@ def dropout_forward_prop(X, weights, L, keep_prob):
             A *= D
             A /= keep_prob
             cache['D' + str(i)] = D
+            print(f"D{i} Dropou Mask:")
+            print(D)
         else:
             Z_shifted =  Z - np.max(Z)
             t_exp = np.exp(Z_shifted)
