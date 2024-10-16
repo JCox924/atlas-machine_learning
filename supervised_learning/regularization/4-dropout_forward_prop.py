@@ -23,27 +23,36 @@ def dropout_forward_prop(X, weights, L, keep_prob):
         keep_prob: the probability that a node will be kept
 
     Returns:
-        A dictionary containing the outputs of each layer and the dropout mask
+        A dictionary containing the outputs of each i and the dropout mask
     """
     np.random.seed(0)
     cache = {}
     cache['A0'] = X
     A = X
 
-    for i in range(1, L + 1):
-        W = weights['W' + str(i)]
-        b = weights['b' + str(i)]
+    for i in range(1, L):
+        W = weights["W" + str(i)]
+        b = weights["b" + str(i)]
 
-        Z = np.matmul(W, A) + b
+        Z = np.dot(W, A) + b
 
-        if i == L:
-            A = softmax(Z)
-        else:
-            A = np.tanh(Z)
-            D = np.random.rand(A.shape[0], A.shape[1])
-            D = (D < keep_prob).astype(int)
-            A *= D
-            A /= keep_prob
-            cache['D' + str(i)] = D
-        cache['A' + str(i)] = A
+        A = np.tanh(Z)
+
+        D = np.random.rand(A.shape[0], A.shape[1]) < keep_prob
+        A = np.multiply(A, D)
+        A /= keep_prob
+
+        cache["Z" + str(i)] = Z
+        cache["A" + str(i)] = A
+        cache["D" + str(i)] = D.astype(int)
+
+    W = weights["W" + str(L)]
+    b = weights["b" + str(L)]
+    Z = np.dot(W, A) + b
+
+    A = softmax(Z)
+
+    cache["Z" + str(L)] = Z
+    cache["A" + str(L)] = A
+
     return cache
