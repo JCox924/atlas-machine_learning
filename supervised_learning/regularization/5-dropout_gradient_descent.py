@@ -23,18 +23,18 @@ def dropout_gradient_descent(Y, weights, cache, alpha, keep_prob, L):
     """
     m = Y.shape[1]
     dZ = {}
-    for l in reversed(range(1, L + 1)):
-        A_curr = cache['A{}'.format(l)]
-        A_prev = cache['A{}'.format(l - 1)]
-        if l == L:
-            dZ[l] = A_curr - Y
+    for i in reversed(range(1, L + 1)):
+        A_curr = cache['A{}'.format(i)]
+        A_prev = cache['A{}'.format(i - 1)]
+        if i == L:
+            dZ[i] = A_curr - Y
         else:
-            D_curr = cache['D{}'.format(l)]
-            dA = np.matmul(weights['W{}'.format(l + 1)].T, dZ[l + 1])
+            D_curr = cache['D{}'.format(i)]
+            dA = np.matmul(weights['W{}'.format(i + 1)].T, dZ[i + 1])
             dA *= D_curr
             dA /= keep_prob
-            dZ[l] = dA * (1 - A_curr ** 2)
-        dW = (1 / m) * np.matmul(dZ[l], A_prev.T)
-        db = (1 / m) * np.sum(dZ[l], axis=1, keepdims=True)
-        weights['W{}'.format(l)] -= alpha * dW
-        weights['b{}'.format(l)] -= alpha * db
+            dZ[i] = dA * (1 - A_curr ** 2)
+        dW = (1 / m) * np.matmul(dZ[i], A_prev.T)
+        db = (1 / m) * np.sum(dZ[i], axis=1)
+        weights['W{}'.format(i)] -= alpha * dW
+        weights['b{}'.format(i)] -= alpha * db
