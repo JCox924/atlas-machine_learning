@@ -22,19 +22,19 @@ def dropout_gradient_descent(Y, weights, cache, alpha, keep_prob, L):
         Updates the weights dictionary in place (no return).
     """
     m = Y.shape[1]
-    dZ = None
+    dZ = {}
     for l in reversed(range(1, L + 1)):
         A_curr = cache['A{}'.format(l)]
+        A_prev = cache['A{}'.format(l - 1)]
         if l == L:
-            dZ = A_curr - Y
+            dZ[l] = A_curr - Y
         else:
             D_curr = cache['D{}'.format(l)]
-            dA = np.dot(weights['W{}'.format(l + 1)].T, dZ)
+            dA = np.dot(weights['W{}'.format(l + 1)].T, dZ[l + 1])
             dA *= D_curr
             dA /= keep_prob
-            dZ = dA * (1 - A_curr ** 2)
-        A_prev = cache['A{}'.format(l - 1)]
-        dW = (1 / m) * np.dot(dZ, A_prev.T)
-        db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
+            dZ[l] = dA * (1 - A_curr ** 2)
+        dW = (1 / m) * np.dot(dZ[l], A_prev.T)
+        db = (1 / m) * np.sum(dZ[l], axis=1, keepdims=True)
         weights['W{}'.format(l)] -= alpha * dW
         weights['b{}'.format(l)] -= alpha * db

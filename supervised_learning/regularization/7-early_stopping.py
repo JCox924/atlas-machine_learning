@@ -9,8 +9,10 @@ def early_stopping(cost, opt_cost, threshold, patience, count):
     """
         Determines if gradient descent should be stopped early.
 
-        Early stopping occurs when the validation cost has not decreased relative
-        to the optimal validation cost by more than the threshold over a specific
+        Early stopping occurs when the validation
+        cost has not decreased relative
+        to the optimal validation cost by more than the
+        threshold over a specific
         patience count.
 
         Args:
