@@ -8,7 +8,7 @@ import numpy as np
 
 def softmax(Z):
     """Softmax activation helper function for stability"""
-    exp_Z = np.exp(Z - np.max(Z, axis=0, keepdims=True))
+    exp_Z = np.exp(Z - np.max(Z))
     return exp_Z / np.sum(exp_Z, axis=0, keepdims=True)
 
 
@@ -29,27 +29,18 @@ def dropout_forward_prop(X, weights, L, keep_prob):
     cache['A0'] = X
     A = X
 
-    for i in reversed(range(1, L + 1)):
-        W = weights["W" + str(i)]
-        b = weights["b" + str(i)]
-
-        Z = np.dot(W, A) + b
-        A = np.tanh(Z)
-
-        D = np.random.rand(A.shape[0], A.shape[1]) < keep_prob
-        A = np.multiply(A, D)
-        A /= keep_prob
-
-        cache["Z" + str(i)] = Z
-        cache["A" + str(i)] = A
-        cache["D" + str(i)] = D.astype(int)
-
-    W = weights["W" + str(L)]
-    b = weights["b" + str(L)]
-    Z = np.dot(W, A) + b
-    A = softmax(Z)
-
-    cache["Z" + str(L)] = Z
-    cache["A" + str(L)] = A
-
+    for layer in range(1, L + 1):
+        W = weights["W" + str(layer)]
+        b = weights["b" + str(layer)]
+        z = np.dot(W, A) + b
+        if layer == L:
+            A = softmax(z)
+        else:
+            A = np.tanh(z)
+            mask = np.random.rand(A.shape[0], A.shape[1])
+            mask = (mask < keep_prob).astype(int)
+            A *= mask
+            A = A / keep_prob
+            cache["D" + str(layer)] = mask
+        cache["A" + str(layer)] = A
     return cache
