@@ -29,7 +29,7 @@ def dropout_forward_prop(X, weights, L, keep_prob):
     cache['A0'] = X
     A = X
 
-    for i in range(1, L):
+    for i in reversed(range(1, L + 1)):
         W = weights["W" + str(i)]
         b = weights["b" + str(i)]
 
