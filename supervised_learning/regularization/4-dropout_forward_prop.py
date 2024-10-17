@@ -25,7 +25,6 @@ def dropout_forward_prop(X, weights, L, keep_prob):
     Returns:
         A dictionary containing the outputs of each i and the dropout mask
     """
-    np.random.seed(0)
     cache = {}
     cache['A0'] = X
     A = X
@@ -35,7 +34,6 @@ def dropout_forward_prop(X, weights, L, keep_prob):
         b = weights["b" + str(i)]
 
         Z = np.dot(W, A) + b
-
         A = np.tanh(Z)
 
         D = np.random.rand(A.shape[0], A.shape[1]) < keep_prob
@@ -49,7 +47,6 @@ def dropout_forward_prop(X, weights, L, keep_prob):
     W = weights["W" + str(L)]
     b = weights["b" + str(L)]
     Z = np.dot(W, A) + b
-
     A = softmax(Z)
 
     cache["Z" + str(L)] = Z
