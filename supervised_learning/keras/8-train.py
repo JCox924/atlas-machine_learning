@@ -46,14 +46,14 @@ def train_model(network, data, labels, batch_size, epochs, validation_data=None,
             """Inverse time decay learning rate schedule"""
             return alpha / (1 + decay_rate * epoch)
 
-        lr_decay_callback = K.callbacks.LearningRateScheduler(lr_schedule, verbose=1)
+        lr_decay_callback = K.callbacks.LearningRateScheduler(lr_schedule, verbose=0)
         callbacks.append(lr_decay_callback)
 
     if save_best and validation_data is not None and filepath is not None:
         checkpoint_callback = K.callbacks.ModelCheckpoint(filepath=filepath,
                                                           monitor='val_loss',
                                                           save_best_only=True,
-                                                          verbose=1)
+                                                          verbose=0)
         callbacks.append(checkpoint_callback)
 
     history = network.fit(data,
