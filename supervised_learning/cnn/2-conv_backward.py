@@ -5,17 +5,6 @@ Module for performing back propagation over a convolutional layer
 import numpy as np
 
 
-def pad_valid(A_prev):
-    """
-    Performs valid padding (no padding)
-    Args:
-        A_prev: Input to be padded
-    Returns:
-        Padded input (same as input for valid padding)
-    """
-    return A_prev
-
-
 def pad_same(A_prev, kh, kw, sh, sw):
     """
     Performs same padding on images
@@ -79,17 +68,11 @@ def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
     Returns:
         The gradients with respect to previous layer, kernels, and biases
     """
-    m = A_prev.shape[0]
-    h_prev = A_prev.shape[1]
-    w_prev = A_prev.shape[2]
-    c_prev = A_prev.shape[3]
+    m, h_prev, w_prev, c_prev = A_prev.shape
 
-    kh = W.shape[0]
-    kw = W.shape[1]
-    c_new = W.shape[3]
+    kh, kw, _, c_new = W.shape
 
-    h_new = dZ.shape[1]
-    w_new = dZ.shape[2]
+    _, h_new, w_new, _ = dZ.shape
 
     sh, sw = stride
 
@@ -98,8 +81,8 @@ def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
     db = np.sum(dZ, axis=(0, 1, 2), keepdims=True)
 
     if padding == "valid":
-        padded = pad_valid(A_prev)
-        ph, pw = 0, 0
+        padded = A_prev
+        ph_top, ph_bottom, pw_left, pw_right = 0, 0, 0, 0
     elif padding == "same":
         padded, ph_top, ph_bottom, pw_left, pw_right = pad_same(A_prev, kh, kw, sh, sw)
 
@@ -128,6 +111,10 @@ def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
                             a_slice * dZ[i, h, w, c]
                     )
 
-    dA_prev = dA_padded[:, ph_top:ph_top + h_prev, pw_left:pw_left + w_prev, :]
+    if padding == 'valid':
+        dA_prev = dA_padded
+    else:
+        dA_prev = (
+                      dA_padded)[:, ph_top:ph_top + h_prev, pw_left:pw_left + w_prev, :]
 
     return dA_prev, dW, db
