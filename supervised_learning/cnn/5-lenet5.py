@@ -13,7 +13,7 @@ def lenet5(X):
     Returns:
         model: K.Model compiled with Adam optimizer and accuracy metrics
     """
-    initializer = K.initializers.HeNormal()
+    initializer = K.initializers.HeNormal(seed=0)
 
     conv1 = K.layers.Conv2D(
         filters=6,
@@ -64,9 +64,9 @@ def lenet5(X):
     model = K.Model(inputs=X, outputs=output)
 
     model.compile(
-        optimizer=K.optimizers.Adam(),
-        loss=K.losses.categorical_crossentropy,
-        metrics=[K.metrics.accuracy]
+        optimizer='adam',
+        loss='categorical_crossentropy',
+        metrics=['accuracy']
     )
 
     return model
