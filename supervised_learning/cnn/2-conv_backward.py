@@ -5,7 +5,7 @@ Module for performing back propagation over a convolutional layer
 import numpy as np
 
 
-def conv_backward(dZ, A_prev, W, padding="same", stride=(1, 1), mode='max'):
+def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
     """
     Performs back propagation over a convolutional layer
     Args:
