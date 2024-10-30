@@ -28,12 +28,26 @@ def pad_same(A_prev, kh, kw, sh, sw):
     Returns:
         Padded input
     """
-    ph = max((((A_prev.shape[1] - 1) * sh + kh - A_prev.shape[1]) // 2), 0)
-    pw = max((((A_prev.shape[2] - 1) * sw + kw - A_prev.shape[2]) // 2), 0)
+    h_prev, w_prev = A_prev.shape[1], A_prev.shape[2]
 
-    return np.pad(A_prev,
-                  ((0, 0), (ph, ph), (pw, pw), (0, 0)),
-                  mode='constant')
+    out_h = int(np.ceil(float(h_prev) / float(sh)))
+    out_w = int(np.ceil(float(w_prev) / float(sw)))
+
+    pad_h = max((out_h - 1) * sh + kh - h_prev, 0)
+    pad_w = max((out_w - 1) * sw + kw - w_prev, 0)
+
+    ph_top = pad_h // 2
+    ph_bottom = pad_h - ph_top
+    pw_left = pad_w // 2
+    pw_right = pad_w - pw_left
+
+    padded = np.pad(A_prev,
+                    ((0, 0),
+                     (ph_top, ph_bottom),
+                     (pw_left, pw_right),
+                     (0, 0)),
+                    mode='constant')
+    return padded, ph_top, ph_bottom, pw_left, pw_right
 
 
 def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
@@ -87,15 +101,16 @@ def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
         padded = pad_valid(A_prev)
         ph, pw = 0, 0
     elif padding == "same":
-        padded = pad_same(A_prev, kh, kw, sh, sw)
-        ph = max((((h_prev - 1) * sh + kh - h_prev) // 2), 0)
-        pw = max((((w_prev - 1) * sw + kw - w_prev) // 2), 0)
+        padded, ph_top, ph_bottom, pw_left, pw_right = pad_same(A_prev, kh, kw, sh, sw)
+
     else:
         raise ValueError("padding must be 'same' or 'valid'")
 
     dA_padded = np.zeros_like(padded)
 
     for i in range(m):
+        A_prev_padded = padded[i]
+        dA_prev_padded = dA_padded[i]
         for h in range(h_new):
             for w in range(w_new):
                 for c in range(c_new):
@@ -104,18 +119,15 @@ def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
                     w_start = w * sw
                     w_end = w_start + kw
 
-                    a_slice = padded[i, h_start:h_end, w_start:w_end, :]
+                    a_slice = A_prev_padded[h_start:h_end, w_start:w_end, :]
 
-                    dA_padded[i, h_start:h_end, w_start:w_end, :] += (
+                    dA_prev_padded[h_start:h_end, w_start:w_end, :] += (
                             W[:, :, :, c] * dZ[i, h, w, c]
                     )
                     dW[:, :, :, c] += (
                             a_slice * dZ[i, h, w, c]
                     )
 
-    if padding == 'valid':
-        dA_prev = dA_padded
-    else:
-        dA_prev = dA_padded[:, ph:h_prev + ph, pw:w_prev + pw, :]
+    dA_prev = dA_padded[:, ph_top:ph_top + h_prev, pw_left:pw_left + w_prev, :]
 
     return dA_prev, dW, db
