@@ -17,62 +17,58 @@ def lenet5(x, y):
         loss: tensor for the loss of the network
         accuracy: tensor for the accuracy of the network
     """
-    conv1 = tf.layers.conv2d(
-        inputs=x,
+    initializer = tf.keras.initializers.VarianceScaling(scale=2.0)
+    conv1 = tf.keras.layers.Conv2D(
         filters=6,
         kernel_size=[5, 5],
         padding="same",
         activation=tf.nn.relu,
-        kernel_initializer=tf.keras.initializers.VarianceScaling(scale=2.0)
-    )
+        kernel_initializer=initializer
+    )(x)
 
-    pool1 = tf.layers.max_pooling2d(
-        inputs=conv1,
+    pool1 = tf.keras.layers.MaxPooling2D(
         pool_size=[2, 2],
         strides=2
-    )
+    )(conv1)
 
-    conv2 = tf.layers.conv2d(
-        inputs=pool1,
+    conv2 = tf.keras.layers.Conv2D(
         filters=16,
         kernel_size=[5, 5],
         padding="valid",
         activation=tf.nn.relu,
-        kernel_initializer=tf.keras.initializers.VarianceScaling(scale=2.0)
-    )
+        kernel_initializer=initializer
+    )(pool1)
 
-    pool2 = tf.layers.max_pooling2d(
-        inputs=conv2,
+    pool2 = tf.keras.layers.MaxPooling2D(
         pool_size=[2, 2],
         strides=2
-    )
+    )(conv2)
 
     pool2_flat = tf.reshape(pool2, [-1, 5 * 5 * 16])
 
-    fc1 = tf.layers.dense(
-        inputs=pool2_flat,
+    fc1 = tf.keras.layers.Dense(
         units=120,
         activation=tf.nn.relu,
-        kernel_initializer=tf.keras.initializers.VarianceScaling(scale=2.0)
-    )
+        kernel_initializer=initializer
+    )(pool2_flat)
 
-    fc2 = tf.layers.dense(
-        inputs=fc1,
+    fc2 = tf.keras.layers.Dense(
         units=84,
         activation=tf.nn.relu,
-        kernel_initializer=tf.keras.initializers.VarianceScaling(scale=2.0)
-    )
+        kernel_initializer=initializer
+    )(fc1)
 
-    output = tf.layers.dense(
-        inputs=fc2,
+    logits = tf.keras.layers.Dense(
         units=10,
-        activation=tf.nn.softmax,
-        kernel_initializer=tf.keras.initializers.VarianceScaling(scale=2.0)
-    )
+        activation=None,
+        kernel_initializer=initializer
+    )(fc2)
+
+    output = tf.nn.softmax(logits)
 
     loss = (
         tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y,
-                                                                  logits=output
+                                                                  logits=logits
                                                                   )
                        )
     )
