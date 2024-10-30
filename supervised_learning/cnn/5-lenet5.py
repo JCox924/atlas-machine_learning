@@ -13,15 +13,14 @@ def lenet5(X):
     Returns:
         model: K.Model compiled with Adam optimizer and accuracy metrics
     """
+    initializer = K.initializers.HeNormal()
+
     conv1 = K.layers.Conv2D(
         filters=6,
         kernel_size=[5, 5],
         padding="same",
-        activation=K.activations.relu,
-        kernel_initializer=K.initializers.VarianceScaling(scale=2.0,
-                                                          mode='fan_in',
-                                                          distribution='normal',
-                                                          seed=0)
+        activation='relu',
+        kernel_initializer=initializer
     )(X)
 
     pool1 = K.layers.MaxPooling2D(
@@ -33,11 +32,8 @@ def lenet5(X):
         filters=16,
         kernel_size=[5, 5],
         padding="valid",
-        activation=K.activations.relu,
-        kernel_initializer=K.initializers.VarianceScaling(scale=2.0,
-                                                          mode='fan_in',
-                                                          distribution='normal',
-                                                          seed=0)
+        activation='relu',
+        kernel_initializer=initializer
     )(pool1)
 
     pool2 = K.layers.MaxPooling2D(
@@ -49,29 +45,20 @@ def lenet5(X):
 
     fc1 = K.layers.Dense(
         units=120,
-        activation=K.activations.relu,
-        kernel_initializer=K.initializers.VarianceScaling(scale=2.0,
-                                                          mode='fan_in',
-                                                          distribution='normal',
-                                                          seed=0)
+        activation='relu',
+        kernel_initializer=initializer
     )(pool2_flat)
 
     fc2 = K.layers.Dense(
         units=84,
-        activation=K.activations.relu,
-        kernel_initializer=K.initializers.VarianceScaling(scale=2.0,
-                                                          mode='fan_in',
-                                                          distribution='normal',
-                                                          seed=0)
+        activation='relu',
+        kernel_initializer=initializer
     )(fc1)
 
     output = K.layers.Dense(
         units=10,
-        activation=K.activations.softmax,
-        kernel_initializer=K.initializers.VarianceScaling(scale=2.0,
-                                                          mode='fan_in',
-                                                          distribution='normal',
-                                                          seed=0)
+        activation='softmax',
+        kernel_initializer=initializer
     )(fc2)
 
     model = K.Model(inputs=X, outputs=output)
