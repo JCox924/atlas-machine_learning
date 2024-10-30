@@ -22,7 +22,7 @@ def lenet5(x, y):
         filters=6,
         kernel_size=[5, 5],
         padding="same",
-        activation=tf.nn.relu,
+        activation='relu',
         kernel_initializer=initializer
     )(x)
 
@@ -35,7 +35,7 @@ def lenet5(x, y):
         filters=16,
         kernel_size=[5, 5],
         padding="valid",
-        activation=tf.nn.relu,
+        activation='relu',
         kernel_initializer=initializer
     )(pool1)
 
@@ -44,23 +44,22 @@ def lenet5(x, y):
         strides=2
     )(conv2)
 
-    pool2_flat = tf.reshape(pool2, [-1, 5 * 5 * 16])
+    pool2_flat = tf.layers.Flatten()(pool2)
 
     fc1 = tf.keras.layers.Dense(
         units=120,
-        activation=tf.nn.relu,
+        activation='relu',
         kernel_initializer=initializer
     )(pool2_flat)
 
     fc2 = tf.keras.layers.Dense(
         units=84,
-        activation=tf.nn.relu,
+        activation='relu',
         kernel_initializer=initializer
     )(fc1)
 
     logits = tf.keras.layers.Dense(
         units=10,
-        activation=None,
         kernel_initializer=initializer
     )(fc2)
 
