@@ -2,7 +2,7 @@
 """
 Module 0-inception_block contains funtions inception_block(A_prev, filters):
 """
-import tensorflow.keras as K
+from tensorflow import keras as K
 
 
 def inception_block(A_prev, filters):
