@@ -12,7 +12,7 @@ def identity_block(A_prev, filters):
         'Deep Residual Learning for Image Recognition' (2015).
 
     Args:
-        A_prev: tensor, output from the previous layer
+        A_prev: tensor, output the previous layer
         filters: tuple or list, contains F11, F3, F12
             F11: filters in the first 1x1 convolution
             F3: filters in the 3x3 convolution
