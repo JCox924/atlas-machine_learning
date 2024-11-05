@@ -32,7 +32,7 @@ def densenet121(growth_rate=32, compression=1.0):
                         strides=2,
                         padding='same',
                         kernel_initializer=initializer)(X)
-    X = K.layers.BatchNormalization(axis=-1)(X)
+    X = K.layers.BatchNormalization()(X)
     X = K.layers.ReLU()(X)
     X = K.layers.MaxPooling2D(pool_size=3,
                               strides=2,
@@ -75,8 +75,6 @@ def densenet121(growth_rate=32, compression=1.0):
                                 layers=16)
 
     # Classification Layer
-    X = K.layers.BatchNormalization(axis=-1)(X)
-    X = K.layers.ReLU()(X)
     X = K.layers.GlobalAveragePooling2D()(X)
     output = K.layers.Dense(1000,
                             activation='softmax',
