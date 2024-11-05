@@ -84,7 +84,3 @@ def densenet121(growth_rate=32, compression=1.0):
     model = K.Model(inputs=input_layer, outputs=output)
 
     return model
-
-if __name__ == '__main__':
-    model = densenet121()
-    model.summary()
