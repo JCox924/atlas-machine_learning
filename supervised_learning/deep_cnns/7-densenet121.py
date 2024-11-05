@@ -27,7 +27,9 @@ def densenet121(growth_rate=32, compression=1.0):
 
     # Initial convolution and max pooling
     X = K.layers.BatchNormalization()(input_layer)
-    X = K.layers.Activation('relu')(X)
+    X = K.layers.Activation('relu',
+                            name="activation_1")(X)
+
     X = K.layers.Conv2D(64,
                         kernel_size=7,
                         strides=2,
@@ -82,3 +84,7 @@ def densenet121(growth_rate=32, compression=1.0):
     model = K.Model(inputs=input_layer, outputs=output)
 
     return model
+
+if __name__ == '__main__':
+    model = densenet121()
+    model.summary()
