@@ -8,7 +8,8 @@ from tensorflow import keras as K
 
 def dense_block(X, nb_filters, growth_rate, layers):
     """
-    Builds a dense block as described in 'Densely Connected Convolutional Networks'.
+    Builds a dense block as described in
+        'Densely Connected Convolutional Networks'.
 
     Args:
         X: tensor, output from the previous layer
