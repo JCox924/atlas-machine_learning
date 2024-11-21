@@ -3,6 +3,8 @@
 from tensorflow import keras as K
 preprocess_data = __import__('0-transfer').preprocess_data
 
+
+
 _, (X, Y) = K.datasets.cifar10.load_data()
 X_p, Y_p = preprocess_data(X, Y)
 model = K.models.load_model('cifar10.h5')
