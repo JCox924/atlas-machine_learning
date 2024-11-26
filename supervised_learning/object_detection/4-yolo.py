@@ -51,7 +51,8 @@ class Yolo:
     def load_images(folder_path):
         """
         Args:
-            folder_path: {string} representing the path to the folder holding all the images to load
+            folder_path: {string} representing the path to
+                the folder holding all the images to load
         Returns:
             a tuple of (images, image_paths)
         """
