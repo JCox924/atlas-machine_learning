@@ -91,16 +91,13 @@ class Yolo:
             pw = anchors[..., 0]
             ph = anchors[..., 1]
 
-            tw = np.exp(tw)
-            th = np.exp(th)
+            tw = np.exp(tw) * pw / input_width
+            th = np.exp(th) * ph / input_height
 
-            bw = (pw * tw) / input_width
-            bh = (ph * th) / input_height
-
-            x1 = (bx - bw / 2) * image_width
-            y1 = (by - bh / 2) * image_height
-            x2 = (bx + bw / 2) * image_width
-            y2 = (by + bh / 2) * image_height
+            x1 = (bx - tw / 2) * image_width
+            y1 = (by - th / 2) * image_height
+            x2 = (bx + tw / 2) * image_width
+            y2 = (by + th / 2) * image_height
 
             boxes_per_output = np.stack((x1, y1, x2, y2), axis=-1)
             boxes.append(boxes_per_output)
