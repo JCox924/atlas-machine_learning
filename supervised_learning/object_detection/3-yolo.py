@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Module 2-yolo contains class:
+Module 3-yolo contains class:
     Yolo
 """
 import numpy as np
@@ -13,6 +13,7 @@ class Yolo:
         __init__(self, model_path, classes_path, class_t, nms_t, anchors)
         process_outputs(self, outputs, image_size)
         filter_boxes(self, boxes, box_confidences, box_class_probs)
+        non_max_suppression(self, filtered_boxes, box_classes, box_scores)
     """
 
     def __init__(self, model_path, classes_path, class_t, nms_t, anchors):
@@ -77,10 +78,9 @@ class Yolo:
             tx = 1 / (1 + np.exp(-tx))
             ty = 1 / (1 + np.exp(-ty))
 
-            c_x = np.tile(np.arange(grid_width),
-                          grid_height).reshape(grid_height, grid_width)
-            c_y = np.tile(np.arange(grid_height),
-                          grid_width).reshape(grid_width, grid_height).T
+            c_x = np.arange(grid_width)
+            c_y = np.arange(grid_height)
+            c_x, c_y = np.meshgrid(c_x, c_y)
 
             c_x = c_x[..., np.newaxis]
             c_y = c_y[..., np.newaxis]
@@ -92,16 +92,13 @@ class Yolo:
             pw = anchors[..., 0]
             ph = anchors[..., 1]
 
-            tw = np.exp(tw)
-            th = np.exp(th)
+            tw = np.exp(tw) * pw / input_width
+            th = np.exp(th) * ph / input_height
 
-            bw = (pw * tw) / input_width
-            bh = (ph * th) / input_height
-
-            x1 = (bx - bw / 2) * image_width
-            y1 = (by - bh / 2) * image_height
-            x2 = (bx + bw / 2) * image_width
-            y2 = (by + bh / 2) * image_height
+            x1 = (bx - tw / 2) * image_width
+            y1 = (by - th / 2) * image_height
+            x2 = (bx + tw / 2) * image_width
+            y2 = (by + th / 2) * image_height
 
             boxes_per_output = np.stack((x1, y1, x2, y2), axis=-1)
             boxes.append(boxes_per_output)
@@ -156,3 +153,65 @@ class Yolo:
         box_scores = np.concatenate(box_scores, axis=0)
 
         return filtered_boxes, box_classes, box_scores
+
+    def non_max_suppression(self, filtered_boxes, box_classes, box_scores):
+        """
+        Applies Non-max suppression to filtered bounding boxes.
+
+        Args:
+            filtered_boxes: numpy.ndarray of shape (?, 4) containing the filtered bounding boxes
+            box_classes: numpy.ndarray of shape (?,) containing the class number for the class
+            box_scores: numpy.ndarray of shape (?) containing the box scores for each box
+
+        Returns:
+            tuple of (box_predictions, predicted_box_classes, predicted_box_scores):
+                box_predictions: numpy.ndarray of shape (?, 4)
+                predicted_box_classes: numpy.ndarray of shape (?,)
+                predicted_box_scores: numpy.ndarray of shape (?)
+        """
+        box_predictions = []
+        predicted_box_classes = []
+        predicted_box_scores = []
+
+        unique_classes = np.unique(box_classes)
+
+        for cls in unique_classes:
+            idxs = np.where(box_classes == cls)
+
+            cls_boxes = filtered_boxes[idxs]
+            cls_box_scores = box_scores[idxs]
+            cls_box_classes = box_classes[idxs]
+
+            sorted_idx = np.argsort(-cls_box_scores)
+            cls_boxes = cls_boxes[sorted_idx]
+            cls_box_scores = cls_box_scores[sorted_idx]
+
+            while len(cls_boxes) > 0:
+                box_predictions.append(cls_boxes[0])
+                predicted_box_classes.append(cls)
+                predicted_box_scores.append(cls_box_scores[0])
+
+                if len(cls_boxes) == 1:
+                    break
+
+                x1 = np.maximum(cls_boxes[0, 0], cls_boxes[1:, 0])
+                y1 = np.maximum(cls_boxes[0, 1], cls_boxes[1:, 1])
+                x2 = np.minimum(cls_boxes[0, 2], cls_boxes[1:, 2])
+                y2 = np.minimum(cls_boxes[0, 3], cls_boxes[1:, 3])
+
+                inter_area = np.maximum(0, x2 - x1) * np.maximum(0, y2 - y1)
+
+                box_area = (cls_boxes[0, 2] - cls_boxes[0, 0]) * (cls_boxes[0, 3] - cls_boxes[0, 1])
+                cls_boxes_areas = (cls_boxes[1:, 2] - cls_boxes[1:, 0]) * (cls_boxes[1:, 3] - cls_boxes[1:, 1])
+
+                iou = inter_area / (box_area + cls_boxes_areas - inter_area)
+
+                keep_idxs = np.where(iou < self.nms_t)[0]
+                cls_boxes = cls_boxes[keep_idxs + 1]
+                cls_box_scores = cls_box_scores[keep_idxs + 1]
+
+        box_predictions = np.array(box_predictions)
+        predicted_box_classes = np.array(predicted_box_classes)
+        predicted_box_scores = np.array(predicted_box_scores)
+
+        return box_predictions, predicted_box_classes, predicted_box_scores
