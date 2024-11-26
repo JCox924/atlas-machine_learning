@@ -87,6 +87,8 @@ class Yolo:
         for image in image:
             pimage_shapes.append(image.shape[:2])
 
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
             resized_image = cv2.resize(image, (input_width, input_height),
                                        interpolation=cv2.INTER_CUBIC)
 
@@ -238,7 +240,6 @@ class Yolo:
 
             cls_boxes = filtered_boxes[idxs]
             cls_box_scores = box_scores[idxs]
-            cls_box_classes = box_classes[idxs]
 
             sorted_idx = np.argsort(-cls_box_scores)
             cls_boxes = cls_boxes[sorted_idx]
