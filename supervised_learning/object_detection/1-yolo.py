@@ -76,10 +76,9 @@ class Yolo:
             tx = 1 / (1 + np.exp(-tx))
             ty = 1 / (1 + np.exp(-ty))
 
-            c_x = np.tile(np.arange(grid_width),
-                          grid_height).reshape(grid_height, grid_width)
-            c_y = np.tile(np.arange(grid_height),
-                          grid_width).reshape(grid_width, grid_height).T
+            c_x = np.arange(grid_width)
+            c_y = np.arange(grid_height)
+            c_x, c_y = np.meshgrid(c_x, c_y)
 
             c_x = c_x[..., np.newaxis]
             c_y = c_y[..., np.newaxis]
