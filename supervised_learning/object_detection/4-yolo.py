@@ -182,15 +182,20 @@ class Yolo:
         Applies Non-max suppression to filtered bounding boxes.
 
         Args:
-            filtered_boxes: numpy.ndarray of shape (?, 4) containing the filtered bounding boxes
-            box_classes: numpy.ndarray of shape (?,) containing the class number for the class
-            box_scores: numpy.ndarray of shape (?) containing the box scores for each box
+            filtered_boxes: numpy.ndarray of shape (?, 4)
+                containing the filtered bounding boxes
+            box_classes: numpy.ndarray of shape (?,)
+                containing the class number for the class
+            box_scores: numpy.ndarray of shape (?)
+                containing the box scores for each box
 
         Returns:
-            tuple of (box_predictions, predicted_box_classes, predicted_box_scores):
-                box_predictions: numpy.ndarray of shape (?, 4)
-                predicted_box_classes: numpy.ndarray of shape (?,)
-                predicted_box_scores: numpy.ndarray of shape (?)
+            tuple of (box_predictions,
+                predicted_box_classes,
+                predicted_box_scores):
+                    box_predictions: numpy.ndarray of shape (?, 4)
+                    predicted_box_classes: numpy.ndarray of shape (?,)
+                    predicted_box_scores: numpy.ndarray of shape (?)
         """
         box_predictions = []
         predicted_box_classes = []
@@ -224,8 +229,10 @@ class Yolo:
 
                 inter_area = np.maximum(0, x2 - x1) * np.maximum(0, y2 - y1)
 
-                box_area = (cls_boxes[0, 2] - cls_boxes[0, 0]) * (cls_boxes[0, 3] - cls_boxes[0, 1])
-                cls_boxes_areas = (cls_boxes[1:, 2] - cls_boxes[1:, 0]) * (cls_boxes[1:, 3] - cls_boxes[1:, 1])
+                box_area = ((cls_boxes[0, 2] - cls_boxes[0, 0]) *
+                            (cls_boxes[0, 3] - cls_boxes[0, 1]))
+                cls_boxes_areas = ((cls_boxes[1:, 2] - cls_boxes[1:, 0]) *
+                                   (cls_boxes[1:, 3] - cls_boxes[1:, 1]))
 
                 iou = inter_area / (box_area + cls_boxes_areas - inter_area)
 
