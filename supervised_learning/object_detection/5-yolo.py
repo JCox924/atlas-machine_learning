@@ -69,7 +69,7 @@ class Yolo:
 
         return images, image_paths
 
-    def preprocess_images(self, image):
+    def preprocess_images(self, images):
         """
         Preprocesses the image
 
@@ -84,7 +84,7 @@ class Yolo:
         pimages = []
         pimage_shapes = []
 
-        for image in image:
+        for image in images:
             pimage_shapes.append(image.shape[:2])
 
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
