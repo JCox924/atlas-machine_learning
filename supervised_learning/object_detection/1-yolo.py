@@ -60,7 +60,6 @@ class Yolo:
         box_confidences = []
         box_class_probs = []
 
-        input_shape = self.model.input.shape
         image_height, image_width = image_size
 
         for output, anchors in zip(outputs, self.anchors):
@@ -82,10 +81,13 @@ class Yolo:
             pw = anchors[..., 0]
             ph = anchors[..., 1]
 
-            x1 = (bx - tw / 2) * image_width
-            y1 = (by - th / 2) * image_height
-            x2 = (bx + tw / 2) * image_width
-            y2 = (by + th / 2) * image_height
+            bw = pw * np.exp(tw) / self.model.input.shape[1]
+            bh = ph * np.exp(th) / self.model.input.shape[2]
+
+            x1 = (bx - bw / 2) * image_width
+            y1 = (by - bh / 2) * image_height
+            x2 = (bx + bw / 2) * image_width
+            y2 = (by + bh / 2) * image_height
 
             boxes_per_output = np.stack((x1, y1, x2, y2), axis=-1)
             boxes.append(boxes_per_output)
