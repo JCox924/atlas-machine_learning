@@ -61,43 +61,34 @@ class Yolo:
         box_confidences = []
         box_class_probs = []
 
-        input_shape = self.model.input.shape
-        input_height = input_shape[1]
-        input_width = input_shape[2]
         image_height, image_width = image_size
 
         for output, anchors in zip(outputs, self.anchors):
             grid_height, grid_width, anchor_boxes = output.shape[:3]
+
+            c_x = np.arange(grid_width).reshape(1, grid_width, 1)
+            c_y = np.arange(grid_height).reshape(grid_height, 1, 1)
 
             tx = output[..., 0]
             ty = output[..., 1]
             tw = output[..., 2]
             th = output[..., 3]
 
-            tx = 1 / (1 + np.exp(-tx))
-            ty = 1 / (1 + np.exp(-ty))
-
-            c_x = np.arange(grid_width)
-            c_y = np.arange(grid_height)
-            c_x, c_y = np.meshgrid(c_x, c_y)
-
-            c_x = c_x[..., np.newaxis]
-            c_y = c_y[..., np.newaxis]
-
-            bx = (tx + c_x) / grid_width
-            by = (ty + c_y) / grid_height
+            # Apply sigmoid to tx, ty
+            bx = (1 / (1 + np.exp(-tx)) + c_x) / grid_width
+            by = (1 / (1 + np.exp(-ty)) + c_y) / grid_height
 
             anchors = anchors.reshape((1, 1, anchor_boxes, 2))
             pw = anchors[..., 0]
             ph = anchors[..., 1]
 
-            tw = np.exp(tw) * pw / input_width
-            th = np.exp(th) * ph / input_height
+            bw = pw * np.exp(tw) / self.model.input.shape[1]
+            bh = ph * np.exp(th) / self.model.input.shape[2]
 
-            x1 = (bx - tw / 2) * image_width
-            y1 = (by - th / 2) * image_height
-            x2 = (bx + tw / 2) * image_width
-            y2 = (by + th / 2) * image_height
+            x1 = (bx - bw / 2) * image_width
+            y1 = (by - bh / 2) * image_height
+            x2 = (bx + bw / 2) * image_width
+            y2 = (by + bh / 2) * image_height
 
             boxes_per_output = np.stack((x1, y1, x2, y2), axis=-1)
             boxes.append(boxes_per_output)
