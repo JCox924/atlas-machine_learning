@@ -92,7 +92,7 @@ class Yolo:
             rimage = cv2.resize(image, (input_width, input_height),
                                 interpolation=cv2.INTER_CUBIC)
 
-            simage = rimage / 255.0
+            simage = rimage.astype(np.float32) / 255.0
             pimages.append(simage)
 
         pimages = np.array(pimages)
