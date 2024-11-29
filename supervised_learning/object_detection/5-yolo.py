@@ -74,22 +74,25 @@ class Yolo:
         Preprocesses the image
 
         Args:
-            image: list of images as numpy.ndarrays
+            images: list of images as numpy.ndarrays
         Returns:
             a tuple of (pimages, image_shapes)
         """
-        input_height = self.model.input.shape[1]
-        input_width = self.model.input.shape[2]
+        input_height = int(self.model.input.shape[1])
+        input_width = int(self.model.input.shape[2])
 
         pimages = []
         pimage_shapes = []
 
         for image in images:
             pimage_shapes.append(image.shape[:2])
-            resized_image = cv2.resize(image, (input_width, input_height),
-                                       interpolation=cv2.INTER_CUBIC)
 
-            simage = resized_image / 255.0
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+            rimage = cv2.resize(image, (input_width, input_height),
+                                interpolation=cv2.INTER_CUBIC)
+
+            simage = rimage / 255.0
             pimages.append(simage)
 
         pimages = np.array(pimages)
