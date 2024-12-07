@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import napari
-from data_preprocessing.data_preprocessor import get_dataset, load_annotations
+from data_preprocessing.data_preprocessor import get_dataset
 from data_preprocessing.augmentations import random_flip_3d, random_rotate_90
+from utils import load_annotations
 
 # Define paths and parameters
 tomogram_path = '../train/static/ExperimentRuns/TS_5_4/VoxelSpacing10.000/wbp.zarr'
@@ -26,60 +26,79 @@ train_dataset = get_dataset(
     particle_type_mapping=particle_type_mapping
 )
 
+def calculate_centroids(label_volume, annotations):
+    """
+    Calculate centroids for each unique label in the dense label volume
+    while retaining labels from the annotations.
+    """
+    from scipy.ndimage import center_of_mass
+    centroids = []
+    labels = np.unique(label_volume)
+    for label in labels:
+        if label == 0:  # Skip background
+            continue
+        # Filter annotations by the current label
+        label_annotations = annotations[annotations[:, 3] == label]
+        if label_annotations.size == 0:
+            continue
+        # Compute centroid from filtered annotations
+        centroid_coords = center_of_mass(label_volume == label)
+        centroids.append((*centroid_coords, label))
+    return np.array(centroids)
 
-def visualize_3d_sample(patch, annotations_with_types, particle_type_mapping):
-    with napari.gui_qt():
-        viewer = napari.Viewer()
-        viewer.add_image(patch, name='Patch', colormap='gray')
+def visualize_all_annotations(patch, annotations, particle_type_mapping):
+    """
+    Visualize all loaded annotations in Napari alongside a tomogram patch.
+    """
+    import napari
 
-        if annotations_with_types.size > 0:
-            coords = annotations_with_types[:, :3]
-            particle_types = annotations_with_types[:, 3].astype(int)
+    # Debug: Ensure annotations are available
+    if annotations.size == 0:
+        print("No annotations to display.")
+        return
 
-            # Check and log coordinate values
-            print("Coords before filtering:", coords)
+    # Extract coordinates and labels
+    coords = annotations[:, :3]
+    particle_types = annotations[:, 3].astype(int)
 
-            # Remove invalid entries
-            valid_mask = particle_types >= 0  # Assuming invalid types are < 0
-            coords = coords[valid_mask]
-            particle_types = particle_types[valid_mask]
+    # Map particle type labels to names
+    label_to_particle_type = {v: k for k, v in particle_type_mapping.items()}
+    particle_type_names = [label_to_particle_type[label] for label in particle_types]
 
-            print("Coords after filtering:", coords)
+    # Assign colors based on particle types
+    unique_types = np.unique(particle_types)
+    num_types = len(unique_types)
+    colormap = plt.get_cmap('hsv')  # Get the colormap
+    colors = colormap(np.linspace(0, 1, num_types))
 
-            if coords.size > 0:
-                # Map particle type labels to names
-                label_to_particle_type = {v: k for k, v in particle_type_mapping.items()}
-                particle_type_names = [label_to_particle_type[label] for label in particle_types]
+    # Map particle types to colors
+    type_to_color = {ptype: colors[i] for i, ptype in enumerate(unique_types)}
+    annotation_colors = np.array([type_to_color[ptype] for ptype in particle_types])
 
-                # Assign colors based on particle types
-                unique_types = np.unique(particle_types)
-                num_types = len(unique_types)
-                colormap = plt.cm.get_cmap('hsv', num_types)
-                colors = colormap(np.linspace(0, 1, num_types))
+    # Create Napari viewer
+    viewer = napari.Viewer()
+    viewer.add_image(patch, name='Patch', colormap='gray')
 
-                # Map particle types to colors
-                type_to_color = {ptype: colors[i] for i, ptype in enumerate(unique_types)}
-                annotation_colors = np.array([type_to_color[ptype] for ptype in particle_types])
+    # Add annotations as points
+    viewer.add_points(
+        coords,
+        size=5,  # Adjust size as needed
+        symbol='o',
+        name='Annotations',
+        face_color=annotation_colors,
+        border_color='black',
+        properties={'particle_type': particle_type_names},
+        text={'string': '{particle_type}', 'size': 10, 'color': 'white'}
+    )
 
-                # Add points to Napari viewer
-                viewer.add_points(
-                    coords,
-                    size=5,
-                    symbol='o',
-                    name='Annotations',
-                    face_color=annotation_colors,
-                    edge_color='black',
-                    properties={'particle_type': particle_type_names},
-                    text={'string': '{particle_type}', 'size': 10, 'color': 'white'}
-                )
-            else:
-                print("No valid annotations to display.")
+    napari.run()
 
 
+# Process and visualize dataset samples
 for batch in train_dataset.take(1):
-    patches, heatmaps, annotations_batch = batch
+    patches, one_hot_labels = batch
     for i in range(patches.shape[0]):
         patch = patches[i].numpy().squeeze()
-        annotations_with_types = annotations_batch[i].numpy()
 
-        visualize_3d_sample(patch, annotations_with_types, particle_type_mapping)
+        # Visualize all annotations loaded from `load_annotations`
+        visualize_all_annotations(patch, annotations, particle_type_mapping)

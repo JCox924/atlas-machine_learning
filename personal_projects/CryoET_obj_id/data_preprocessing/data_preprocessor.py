@@ -62,31 +62,46 @@ def filter_annotations(annotations, particle_types, image_shape):
     particle_types = tf.boolean_mask(particle_types, valid_mask)
     return annotations, particle_types
 
+def create_label_volume(patch_coords, patch_labels, patch_size, num_classes):
+    """
+    Create a dense label volume from sparse particle coordinates and labels.
+
+    Args:
+    - patch_coords: Numpy array of shape (N, 3) containing the coordinates of particles within the patch.
+    - patch_labels: Numpy array of shape (N,) containing the labels for the particles.
+    - patch_size: Tuple representing the size of the patch (depth, height, width).
+    - num_classes: Number of particle types.
+
+    Returns:
+    - label_volume: Dense label volume of shape (depth, height, width, 1).
+    """
+    label_volume = np.zeros(patch_size, dtype=np.int32)  # Initialize the label volume with zeros
+
+    for coord, label in zip(patch_coords, patch_labels):
+        z, y, x = map(int, coord)
+        if 0 <= z < patch_size[0] and 0 <= y < patch_size[1] and 0 <= x < patch_size[2]:
+            label_volume[z, y, x] = int(label)  # Assign the label to the corresponding voxel
+
+    label_volume = np.expand_dims(label_volume, axis=-1)  # Add the channel dimension
+    return label_volume
+
 
 def data_generator(tomogram_paths, patch_size, voxel_spacing, particle_type_mapping, crop=True):
     for path in tomogram_paths:
-        # Load tomogram data
+        # Load tomogram and annotations
         zarr_data = zarr.open(path, mode='r')[0]
-        zarr_shape = zarr_data.shape
-
-        # Load annotations (now use the mapping from outside)
-        annotations_with_types, _ = load_annotations(path, voxel_spacing, particle_type_mapping)  # Integer labels
-
-        annotations = annotations_with_types[:, :3]  # Coordinates (z, y, x)
+        annotations_with_types, _ = load_annotations(path, voxel_spacing, particle_type_mapping)
+        annotations = annotations_with_types[:, :3]  # Coordinates
         particle_type_labels = annotations_with_types[:, 3]
 
         # Generate patches
-        for x in range(0, zarr_shape[0] - patch_size[0] + 1, patch_size[0]):
-            for y in range(0, zarr_shape[1] - patch_size[1] + 1, patch_size[1]):
-                for z in range(0, zarr_shape[2] - patch_size[2] + 1, patch_size[2]):
+        for x in range(0, zarr_data.shape[0] - patch_size[0] + 1, patch_size[0]):
+            for y in range(0, zarr_data.shape[1] - patch_size[1] + 1, patch_size[1]):
+                for z in range(0, zarr_data.shape[2] - patch_size[2] + 1, patch_size[2]):
                     # Extract patch
-                    patch = zarr_data[
-                            x:x + patch_size[0],
-                            y:y + patch_size[1],
-                            z:z + patch_size[2]
-                            ]
+                    patch = zarr_data[x:x + patch_size[0], y:y + patch_size[1], z:z + patch_size[2]]
 
-                    # Find annotations within the patch
+                    # Find annotations in the patch
                     indices = np.where(
                         (annotations[:, 0] >= x) & (annotations[:, 0] < x + patch_size[0]) &
                         (annotations[:, 1] >= y) & (annotations[:, 1] < y + patch_size[1]) &
@@ -99,13 +114,42 @@ def data_generator(tomogram_paths, patch_size, voxel_spacing, particle_type_mapp
                     patch_annotations = annotations[indices] - np.array([x, y, z])
                     patch_particle_types = particle_type_labels[indices]
 
-                    # Combine annotations and particle types
-                    patch_annotations_with_types = np.hstack([
+                    # Create label volume
+                    label_volume = create_label_volume(
                         patch_annotations,
-                        patch_particle_types[:, np.newaxis]
-                    ])
+                        patch_particle_types,
+                        patch_size,
+                        num_classes=len(particle_type_mapping)
+                    )
 
-                    yield patch.astype(np.float32), patch_annotations_with_types.astype(np.float32)
+                    # One-hot encode labels
+                    one_hot_labels = one_hot_encode_labels(label_volume, num_classes=len(particle_type_mapping))
+
+                    # Expand dimensions for the patch
+                    patch = np.expand_dims(patch, axis=-1)
+
+                    # Ensure only patch and labels are yielded
+                    yield patch, one_hot_labels
+
+
+def one_hot_encode_labels(labels, num_classes):
+    """
+    Converts integer labels to one-hot encoded labels.
+
+    Args:
+    - labels: Tensor of shape (depth, height, width, 1).
+    - num_classes: Number of particle types.
+
+    Returns:
+    - One-hot encoded labels of shape (depth, height, width, num_classes).
+    """
+    print("Input labels shape:", labels.shape)  # Expect (depth, height, width, 1)
+    if labels.shape[-1] != 1:
+        raise ValueError(f"Expected labels to have shape (depth, height, width, 1), but got {labels.shape}")
+    labels = tf.squeeze(labels, axis=-1)  # Remove the channel dimension
+    one_hot = tf.one_hot(tf.cast(labels, tf.int32), depth=num_classes)  # Add the class dimension
+    print("One-hot encoded shape:", one_hot.shape)  # Expect (depth, height, width, num_classes)
+    return one_hot
 
 
 def get_dataset(
@@ -114,102 +158,38 @@ def get_dataset(
     batch_size,
     voxel_spacing,
     augmentations=None,
-    shuffle_buffer_size=100,
-    particle_type_mapping={
-        "apo-ferritin": 0,
-        "beta-amylase": 1,
-        "beta-galactosidase": 2,
-        "ribosome": 3,
-        "thyroglobulin": 4,
-        "virus-like-particle": 5,
-    },
-    sigma=3  # Gaussian width for heatmaps
+    shuffle_buffer_size=0,
+    particle_type_mapping={},
+    num_classes=6,  # Number of particle types
 ):
     def generator():
-        for tomogram_path in tomogram_paths:
-            # Load the tomogram data
-            tomogram = load_tomogram(tomogram_path)
+        for patch, one_hot_labels in data_generator(
+                tomogram_paths, patch_size, voxel_spacing, particle_type_mapping
+        ):
+            # Debug: Print shapes
+            print(f"Patch shape before augmentations: {patch.shape}")  # Should be (128, 128, 128, 1)
+            print(f"One-hot labels shape before augmentations: {one_hot_labels.shape}")  # Should be (128, 128, 128, 6)
 
-            # Load annotations and ensure proper format
-            annotations, _ = load_annotations(tomogram_path, voxel_spacing, particle_type_mapping)
-            if not isinstance(annotations, np.ndarray):
-                annotations = np.array(annotations)
+            # Optionally apply augmentations
+            if augmentations:
+                for aug in augmentations:
+                    patch, one_hot_labels = aug(patch, one_hot_labels)
 
-            coords = annotations[:, :3]
-            labels = annotations[:, 3]
-
-            # Number of patches per tomogram
-            num_patches_per_tomogram = 50  # Adjust as needed
-
-            for _ in range(num_patches_per_tomogram):
-                # Randomly select a starting point
-                z = np.random.randint(0, max(1, tomogram.shape[0] - patch_size[0]))
-                y = np.random.randint(0, max(1, tomogram.shape[1] - patch_size[1]))
-                x = np.random.randint(0, max(1, tomogram.shape[2] - patch_size[2]))
-
-                # Extract the patch
-                patch = tomogram[z: z + patch_size[0], y: y + patch_size[1], x: x + patch_size[2]]
-
-                # Adjust annotations to the patch coordinate system
-                patch_coords = []
-                patch_labels = []
-                for coord, label in zip(coords, labels):
-                    voxel_coord = coord.astype(int)
-                    if (
-                            voxel_coord[0] >= z
-                            and voxel_coord[0] < z + patch_size[0]
-                            and voxel_coord[1] >= y
-                            and voxel_coord[1] < y + patch_size[1]
-                            and voxel_coord[2] >= x
-                            and voxel_coord[2] < x + patch_size[2]
-                    ):
-                        patch_coords.append(voxel_coord - np.array([z, y, x]))
-                        patch_labels.append(label)
-
-                # Handle cases with or without annotations
-                if len(patch_coords) == 0:  # No annotations
-                    annotations_with_types = tf.RaggedTensor.from_tensor(
-                        tf.zeros([0, 4], dtype=tf.float32), ragged_rank=1
-                    )
-                else:  # Valid annotations
-                    patch_coords = np.array(patch_coords, dtype=np.float32)  # Convert to numpy array
-                    patch_labels = np.array(patch_labels, dtype=np.float32)  # Convert to numpy array
-                    annotations_with_types = tf.RaggedTensor.from_tensor(
-                        tf.convert_to_tensor(np.hstack([patch_coords, patch_labels[:, np.newaxis]]), dtype=tf.float32),
-                        ragged_rank=1
-                    )
-
-                # Generate heatmap for the patch
-                heatmap = generate_heatmap(patch_size, patch_coords, sigma=sigma)
-
-                # Expand dimensions to add channel
-                patch = np.expand_dims(patch, axis=-1)
-                heatmap = np.expand_dims(heatmap, axis=-1)
-
-                # Apply augmentations if any
-                if augmentations:
-                    for aug in augmentations:
-                        patch, heatmap = aug(patch, heatmap)
-
-                print(f"Patch coords: {patch_coords}")
-                print(f"Patch labels: {patch_labels}")
-                print(f"Annotations with types (shape): {annotations_with_types.shape}")
-
-                # Yield the patch, heatmap, and annotations
-                yield patch.astype(np.float32), heatmap.astype(np.float32), annotations_with_types
+            yield patch, one_hot_labels
 
     # Create a TensorFlow Dataset from the generator
     dataset = tf.data.Dataset.from_generator(
         generator,
         output_signature=(
             tf.TensorSpec(shape=patch_size + (1,), dtype=tf.float32),  # Patch
-            tf.TensorSpec(shape=patch_size + (1,), dtype=tf.float32),  # Heatmap
-            tf.RaggedTensorSpec(shape=[None, 4], dtype=tf.float32),    # Annotations with types
+            tf.TensorSpec(shape=patch_size + (num_classes,), dtype=tf.float32),  # One-hot labels
         )
     )
 
+    if shuffle_buffer_size > 0:
+        dataset = dataset.shuffle(buffer_size=shuffle_buffer_size)
+
     # Shuffle, batch, and prefetch
-    dataset = dataset.shuffle(buffer_size=shuffle_buffer_size)
     dataset = dataset.batch(batch_size)
     dataset = dataset.prefetch(buffer_size=tf.data.AUTOTUNE)
 

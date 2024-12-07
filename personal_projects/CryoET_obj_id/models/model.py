@@ -1,15 +1,18 @@
-from tensorflow.keras.layers import Input, Conv3D, MaxPooling3D, UpSampling3D, concatenate, BatchNormalization, Activation
+import tensorflow as tf
+from tensorflow.keras.layers import (
+    Input, Conv3D, MaxPooling3D, UpSampling3D, concatenate, BatchNormalization, Activation
+)
 from tensorflow.keras.models import Model
-from tensorflow.keras.mixed_precision import set_global_policy
 from tensorflow.keras.optimizers import Adam
-
+from tensorflow.keras.mixed_precision import set_global_policy
 set_global_policy('mixed_float16')
 
 print("Mixed precision policy enabled:")
 
-def unet_3d(input_shape):
+
+def build_3d_unet(input_shape):
     """
-    3D U-Net model.
+    3D U-Net model for multi-class segmentation.
     Args:
     - input_shape: Tuple representing the shape of input (depth, height, width, channels).
     Returns:
@@ -78,11 +81,11 @@ def unet_3d(input_shape):
     conv7 = BatchNormalization()(conv7)
     conv7 = Activation('relu')(conv7)
 
-    # Output layer
-    outputs = Conv3D(1, (1, 1, 1), activation='sigmoid', dtype='float32')(conv7)
+    # Output layer for multi-class segmentation
+    outputs = Conv3D(6, (1, 1, 1), activation='softmax', dtype='float32')(conv7)  # 6 classes
 
+    # Compile the model
     optimizer = Adam()
-
     model = Model(inputs, outputs)
     model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 

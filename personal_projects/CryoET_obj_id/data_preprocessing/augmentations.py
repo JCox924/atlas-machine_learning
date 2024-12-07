@@ -85,87 +85,43 @@ def create_rotation_matrix(angle, axis1, axis2):
     return rotation_matrix
 
 
-def rotate_3d_annotations(annotations_with_types, image_shape, k, axes):
-    """
-    Rotate 3D annotations along specified axes.
+def rotate_3d_annotations(coords, image_shape, k, axes):
+    print("Original coords shape:", coords.shape)
+    coords = tf.reshape(coords, [-1, 3])  # Flatten to [N, 3]
+    print("Reshaped coords shape:", coords.shape)
 
-    Parameters:
-    - annotations_with_types: Tensor of shape (N, 4) or (N, 3) (x, y, z, [particle_type])
-    - image_shape: Shape of the image tensor
-    - k: Number of 90-degree rotations (1, 2, or 3)
-    - axes: Axes to rotate around (e.g., (0, 1), (1, 2), etc.)
+    # Define the rotation matrix
+    rotation_matrix = tf.linalg.diag([1.0] * 3)  # Correct method for diagonal matrix
+    print("Rotation matrix shape:", rotation_matrix.shape)
 
-    Returns:
-    - Rotated annotations_with_types tensor of shape (N, 4)
-    """
-    # Ensure annotations_with_types has 4 columns
-    if annotations_with_types.shape[1] == 3:
-        # Add a default particle_types column if missing
-        particle_types = tf.zeros((annotations_with_types.shape[0], 1), dtype=annotations_with_types.dtype)
-        annotations_with_types = tf.concat([annotations_with_types, particle_types], axis=1)
-
-    coords = annotations_with_types[:, :3]
-    particle_types = annotations_with_types[:, 3]
-
-    # Ensure axes is a Python tuple (convert if necessary)
-    if isinstance(axes, tf.Tensor):
-        axes = tuple(axes.numpy())  # Convert to Python tuple
-
-    # Create a rotation matrix for 90-degree rotations
-    if axes == (0, 1):  # Rotate around the z-axis (x-y plane)
-        rotation_matrix = tf.constant([[0, -1, 0],
-                                        [1,  0, 0],
-                                        [0,  0, 1]], dtype=tf.float32)
-    elif axes == (1, 2):  # Rotate around the x-axis (y-z plane)
-        rotation_matrix = tf.constant([[1,  0,  0],
-                                        [0,  0, -1],
-                                        [0,  1,  0]], dtype=tf.float32)
-    elif axes == (0, 2):  # Rotate around the y-axis (x-z plane)
-        rotation_matrix = tf.constant([[ 0,  0, 1],
-                                        [ 0,  1, 0],
-                                        [-1,  0, 0]], dtype=tf.float32)
-    else:
-        raise ValueError("Invalid axes for rotation. Must be one of (0, 1), (1, 2), or (0, 2).")
-
-    # Apply the rotation matrix k times
-    for _ in range(k):
-        coords = tf.matmul(coords, rotation_matrix)
-
-    # Combine rotated coordinates with particle types
-    annotations_rotated = tf.concat([coords, tf.expand_dims(particle_types, axis=1)], axis=1)
-
-    return annotations_rotated
+    # Apply rotation
+    rotated_coords = tf.matmul(coords, rotation_matrix)
+    return rotated_coords
 
 def random_rotate_90(image, annotations_with_types):
     """
-    Randomly rotate a 3D image and its annotations by 90 degrees around a random axis.
+    Randomly rotates a 3D image and its annotations by 90 degrees along two axes.
 
-    Parameters:
-    - image: Tensor representing the 3D image
-    - annotations_with_types: Tensor of shape (N, 3) or (N, 4)
+    Args:
+    - image: 3D image tensor of shape [depth, height, width, channels].
+    - annotations_with_types: Tensor of shape [N, 4] containing (z, y, x, label).
 
     Returns:
-    - Rotated image and annotations_with_types
+    - Rotated image.
+    - Rotated annotations_with_types.
     """
-    k = tf.random.uniform([], minval=1, maxval=4, dtype=tf.int32)  # 90, 180, or 270 degrees
-
-    # Explicitly define the valid axes for rotation
-    valid_axes = [(0, 1), (1, 2), (0, 2)]
-
-    # Randomly pick one of the valid axes combinations
-    axes_index = tf.random.uniform([], minval=0, maxval=len(valid_axes), dtype=tf.int32)
-    axes = valid_axes[axes_index]
-
-    # Debug statement to verify axes selection
-    print(f"random_rotate_90: Chosen axes={axes}, k={k.numpy()}")
-    print(f"Shape of annotations_with_types before rotation: {annotations_with_types.shape}")
+    # Choose random axes and number of rotations
+    axes = (1, 2)  # Example: rotate along y and x axes
+    k = tf.random.uniform([], minval=0, maxval=4, dtype=tf.int32)
 
     # Rotate the image
-    image = tf.image.rot90(image, k=k)
+    rotated_image = tf.image.rot90(image, k=k)
 
     # Rotate the annotations
-    annotations_with_types = rotate_3d_annotations(annotations_with_types, tf.shape(image), k, axes)
-    return image, annotations_with_types
+    image_shape = tf.shape(image)
+    rotated_annotations = rotate_3d_annotations(annotations_with_types, image_shape, k, axes)
+
+    return rotated_image, rotated_annotations
 
 
 def flip_annotations(annotations_with_types, image_shape, axis):
