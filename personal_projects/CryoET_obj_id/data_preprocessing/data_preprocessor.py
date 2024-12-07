@@ -1,6 +1,8 @@
 import tensorflow as tf
 import numpy as np
 import zarr
+from torch import dtype
+
 from data_preprocessing.utils import load_annotations, generate_heatmap
 
 
@@ -137,7 +139,7 @@ def get_dataset(
             labels = annotations[:, 3]
 
             # Number of patches per tomogram
-            num_patches_per_tomogram = 100  # Adjust as needed
+            num_patches_per_tomogram = 50  # Adjust as needed
 
             for _ in range(num_patches_per_tomogram):
                 # Randomly select a starting point
@@ -150,24 +152,34 @@ def get_dataset(
 
                 # Adjust annotations to the patch coordinate system
                 patch_coords = []
-                for coord in coords:
+                patch_labels = []
+                for coord, label in zip(coords, labels):
                     voxel_coord = coord.astype(int)
                     if (
-                        voxel_coord[0] >= z
-                        and voxel_coord[0] < z + patch_size[0]
-                        and voxel_coord[1] >= y
-                        and voxel_coord[1] < y + patch_size[1]
-                        and voxel_coord[2] >= x
-                        and voxel_coord[2] < x + patch_size[2]
+                            voxel_coord[0] >= z
+                            and voxel_coord[0] < z + patch_size[0]
+                            and voxel_coord[1] >= y
+                            and voxel_coord[1] < y + patch_size[1]
+                            and voxel_coord[2] >= x
+                            and voxel_coord[2] < x + patch_size[2]
                     ):
                         patch_coords.append(voxel_coord - np.array([z, y, x]))
+                        patch_labels.append(label)
+
+                # Handle cases with or without annotations
+                if len(patch_coords) == 0:  # No annotations
+                    annotations_with_types = tf.RaggedTensor.from_tensor(
+                        tf.zeros([0, 4], dtype=tf.float32), ragged_rank=1
+                    )
+                else:  # Valid annotations
+                    patch_coords = np.array(patch_coords, dtype=np.float32)  # Convert to numpy array
+                    patch_labels = np.array(patch_labels, dtype=np.float32)  # Convert to numpy array
+                    annotations_with_types = tf.RaggedTensor.from_tensor(
+                        tf.convert_to_tensor(np.hstack([patch_coords, patch_labels[:, np.newaxis]]), dtype=tf.float32),
+                        ragged_rank=1
+                    )
 
                 # Generate heatmap for the patch
-                patch_coords = np.array(patch_coords)
-
-                if patch_coords.size == 0:
-                    patch_coords = np.empty((0, 3), dtype=np.float32)
-
                 heatmap = generate_heatmap(patch_size, patch_coords, sigma=sigma)
 
                 # Expand dimensions to add channel
@@ -179,15 +191,20 @@ def get_dataset(
                     for aug in augmentations:
                         patch, heatmap = aug(patch, heatmap)
 
-                yield patch, heatmap, patch_coords
+                print(f"Patch coords: {patch_coords}")
+                print(f"Patch labels: {patch_labels}")
+                print(f"Annotations with types (shape): {annotations_with_types.shape}")
+
+                # Yield the patch, heatmap, and annotations
+                yield patch.astype(np.float32), heatmap.astype(np.float32), annotations_with_types
 
     # Create a TensorFlow Dataset from the generator
     dataset = tf.data.Dataset.from_generator(
         generator,
         output_signature=(
-            tf.TensorSpec(shape=patch_size + (1,), dtype=tf.float32),
-            tf.TensorSpec(shape=patch_size + (1,), dtype=tf.float32),
-            tf.RaggedTensorSpec(shape=(None, 3), dtype=tf.float32)
+            tf.TensorSpec(shape=patch_size + (1,), dtype=tf.float32),  # Patch
+            tf.TensorSpec(shape=patch_size + (1,), dtype=tf.float32),  # Heatmap
+            tf.RaggedTensorSpec(shape=[None, 4], dtype=tf.float32),    # Annotations with types
         )
     )
 

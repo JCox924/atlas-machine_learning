@@ -114,19 +114,13 @@ class NeuralNetwork:
 
         return prediction, cost
 
-    def least_action_optimizer(self, X, Y, A1, A2, alpha=0.05, gamma=0.9):
+    def least_action_optimizer(self, X, Y, A1, A2, alpha=0.05, gamma=0.9, mass=1.0):
         """
-        Performs one pass of the least action optimizer on the neural network
-        X: input data
-        Y: correct labels
-        A1: activated output of hidden layer
-        A2: activated output of output layer
-        alpha: learning rate
-        gamma: damping coefficient (0 < gamma < 1)
+        Performs one pass of an optimizer inspired by the least action principle.
         """
         m = Y.shape[1]
 
-        # Compute gradients
+        # Compute gradients (Potential Energy derivative)
         dZ2 = A2 - Y
         dW2 = (1 / m) * np.dot(dZ2, A1.T)
         db2 = (1 / m) * np.sum(dZ2, axis=1, keepdims=True)
@@ -136,17 +130,17 @@ class NeuralNetwork:
         dW1 = (1 / m) * np.dot(dZ1, X.T)
         db1 = (1 / m) * np.sum(dZ1, axis=1, keepdims=True)
 
-        # Update velocities (momentum terms)
-        self.__VdW2 = gamma * self.__VdW2 + alpha * dW2
-        self.__Vdb2 = gamma * self.__Vdb2 + alpha * db2
-        self.__VdW1 = gamma * self.__VdW1 + alpha * dW1
-        self.__Vdb1 = gamma * self.__Vdb1 + alpha * db1
+        # Update momentum (p) variables
+        self.__pW2 = gamma * self.__pW2 - alpha * dW2
+        self.__pb2 = gamma * self.__pb2 - alpha * db2
+        self.__pW1 = gamma * self.__pW1 - alpha * dW1
+        self.__pb1 = gamma * self.__pb1 - alpha * db1
 
-        # Update parameters
-        self.__W2 -= self.__VdW2
-        self.__b2 -= self.__Vdb2
-        self.__W1 -= self.__VdW1
-        self.__b1 -= self.__Vdb1
+        # Update parameters using momentum (akin to position update in physics)
+        self.__W2 += self.__pW2 / mass
+        self.__b2 += self.__pb2 / mass
+        self.__W1 += self.__pW1 / mass
+        self.__b1 += self.__pb1 / mass
 
     def gradient_descent(self, X, Y, A1, A2, alpha=0.05):
         """

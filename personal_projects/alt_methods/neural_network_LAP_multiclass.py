@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class NeuralNetwork:
     def __init__(self, nx, nodes, classes):
         """
@@ -21,11 +20,11 @@ class NeuralNetwork:
         self.W2 = np.random.randn(classes, nodes) * np.sqrt(2. / nodes)
         self.b2 = np.zeros((classes, 1))
 
-        # Initialize velocities for LAP optimizer
-        self.VdW1 = np.zeros_like(self.W1)
-        self.Vdb1 = np.zeros_like(self.b1)
-        self.VdW2 = np.zeros_like(self.W2)
-        self.Vdb2 = np.zeros_like(self.b2)
+        # Initialize momentum variables for LAP optimizer
+        self.pW1 = np.zeros_like(self.W1)
+        self.pb1 = np.zeros_like(self.b1)
+        self.pW2 = np.zeros_like(self.W2)
+        self.pb2 = np.zeros_like(self.b2)
 
         # Placeholder for cache
         self.A1 = None
@@ -82,19 +81,22 @@ class NeuralNetwork:
         self.W2 -= alpha * grads["dW2"]
         self.b2 -= alpha * grads["db2"]
 
-    def least_action_optimizer(self, grads, alpha=0.01, gamma=0.9):
-        """Update parameters using the Least Action Principle Optimizer"""
-        # Update velocities
-        self.VdW1 = gamma * self.VdW1 + alpha * grads["dW1"]
-        self.Vdb1 = gamma * self.Vdb1 + alpha * grads["db1"]
-        self.VdW2 = gamma * self.VdW2 + alpha * grads["dW2"]
-        self.Vdb2 = gamma * self.Vdb2 + alpha * grads["db2"]
+    def least_action_optimizer(self, grads, alpha=0.05, gamma=0.9, mass=1.0):
+        """
+        Performs one pass of an optimizer inspired by the least action principle.
+        grads: Dictionary containing gradients
+        """
+        # Update momentum (p) variables
+        self.pW2 = gamma * self.pW2 - alpha * grads['dW2']
+        self.pb2 = gamma * self.pb2 - alpha * grads['db2']
+        self.pW1 = gamma * self.pW1 - alpha * grads['dW1']
+        self.pb1 = gamma * self.pb1 - alpha * grads['db1']
 
-        # Update parameters
-        self.W1 -= self.VdW1
-        self.b1 -= self.Vdb1
-        self.W2 -= self.VdW2
-        self.b2 -= self.Vdb2
+        # Update parameters using momentum (akin to position update in physics)
+        self.W2 += self.pW2 / mass
+        self.b2 += self.pb2 / mass
+        self.W1 += self.pW1 / mass
+        self.b1 += self.pb1 / mass
 
     def predict(self, X):
         """Make predictions"""
@@ -125,14 +127,14 @@ class NeuralNetwork:
         self.costs = costs
         return self.evaluate(X, Y)
 
-    def train_LAP(self, X, Y, iterations=1000, alpha=0.01, gamma=0.9, verbose=True, step=100):
+    def train_LAP(self, X, Y, iterations=1000, alpha=0.01, gamma=0.9, mass=1.0, verbose=True, step=100):
         """Train the neural network using the Least Action Principle Optimizer"""
         costs = []
         for i in range(iterations + 1):
             self.forward_prop(X)
             cost = self.cost(Y, self.A2)
             grads = self.backward_prop(X, Y)
-            self.least_action_optimizer(grads, alpha, gamma)
+            self.least_action_optimizer(grads, alpha, gamma, mass)
 
             if verbose and i % step == 0:
                 costs.append(cost)

@@ -4,7 +4,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 import torchvision
 import torchvision.transforms as transforms
-from neural_network_LAP_pytorch import NeuralNetworkLAP
+from neural_network_LAP_pytorch import NeuralNetwork
 
 # Check if GPU is available
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -36,7 +36,7 @@ test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size,
                          shuffle=False, num_workers=2)
 
 # Initialize the neural network
-model = NeuralNetworkLAP(input_size, hidden_size, num_classes).to(device)
+model = NeuralNetwork(input_size, hidden_size, num_classes).to(device)
 
 # Loss function
 criterion = nn.CrossEntropyLoss()
