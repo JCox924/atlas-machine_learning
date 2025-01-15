@@ -25,8 +25,20 @@ def minor(matrix):
     if len(matrix) == 0 or any(len(row) != len(matrix) for row in matrix):
         raise TypeError('matrix must be a non-empty square matrix')
 
+    def determinant(m):
+        """Compute the determinant of a square matrix m (list of lists)."""
+        size = len(m)
 
-    determinant = __import__('0-determinant').determinant
+        if size == 1:
+            return m[0][0]
+        if size == 2:
+            return m[0][0] * m[1][1] - m[0][1] * m[1][0]
+
+        det = 0
+        for j in range(size):
+            sub_matrix = [row[:j] + row[j + 1:] for row in m[1:]]
+            det += ((-1) ** j) * m[0][j] * determinant(sub_matrix)
+        return det
 
     minor_matrix = []
     for i in range(len(matrix)):
