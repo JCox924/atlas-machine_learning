@@ -213,6 +213,6 @@ def marginal(x, n, P, Pr):
     if not np.isclose([Pr.sum()], [1])[0]:
         raise ValueError("Pr must sum to 1")
 
-    intersection_vals = likelihood(x, n, P)
+    mar = (likelihood(x, n, P) * Pr).sum()
 
-    return intersection_vals.sum()
+    return mar
