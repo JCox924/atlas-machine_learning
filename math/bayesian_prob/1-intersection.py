@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Module 0-likelihood
-Contains a function that calculates the likelihood of obtaining data from a
+Contains a function that calculates the likelihood of obtaining data a
 binomial distribution given various hypothetical probabilities.
 """
 import numpy as np
@@ -9,7 +9,7 @@ import numpy as np
 
 def factorial(k):
     """
-    Computes factorial of k (k!) without importing external libraries.
+    Computes factorial of k (k!)
     """
     if k < 2:
         return 1
