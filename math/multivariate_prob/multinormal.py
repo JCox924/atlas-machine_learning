@@ -55,7 +55,6 @@ class MultiNormal:
         X_centered = data - self.mean
         self.cov = (X_centered @ X_centered.T) / (n - 1)
 
-
     def pdf(self, x):
         """
         Calculates the PDF at a data point x.
