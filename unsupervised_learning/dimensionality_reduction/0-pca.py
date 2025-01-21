@@ -24,15 +24,13 @@ def pca(X, var=0.95):
          W: numpy.array of shape (d, nd)
             The projection matrix which columns are reduced dimensions.
     """
-    n, d = X.shape
-
     cov = np.cov(X, rowvar=False)
 
     eig_vals, eig_vecs = np.linalg.eig(cov)
 
-    sorted_idx = np.argsort(eig_vals)[::-1]
-    eig_vals_sorted = eig_vals[sorted_idx]
-    eig_vecs_sorted = eig_vecs[:, sorted_idx]
+    idx = np.argsort(eig_vals)[::-1]
+    eig_vals_sorted = eig_vals[idx]
+    eig_vecs_sorted = eig_vecs[:, idx]
 
     total_var = np.sum(eig_vals_sorted)
     cumulative_var_ratio = np.cumsum(eig_vals_sorted) / total_var
