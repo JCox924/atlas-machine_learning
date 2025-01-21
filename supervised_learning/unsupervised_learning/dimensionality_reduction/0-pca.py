@@ -13,7 +13,7 @@ def pca(X, var=0.95):
 
     Arguments:
         X:
-            The dataset; n is the number of data points, d is the number
+            The dataset. n is the number of data points, d is the number
             of dimensions.
 
         var:
@@ -22,7 +22,7 @@ def pca(X, var=0.95):
 
     Returns:
          W: numpy.array of shape (d, nd)
-            The projection matrix whose columns are reduced dimensions.
+            The projection matrix which columns are reduced dimensions.
     """
     n, d = X.shape
 
