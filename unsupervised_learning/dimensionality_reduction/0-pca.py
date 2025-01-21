@@ -24,7 +24,7 @@ def pca(X, var=0.95):
          W: numpy.array of shape (d, nd)
             The projection matrix which columns are reduced dimensions.
     """
-    cov = np.cov(X, rowvar=False)
+    cov = np.cov(X, rowvar=False, ddof=0)
 
     eig_vals, eig_vecs = np.linalg.eigh(cov)
 
