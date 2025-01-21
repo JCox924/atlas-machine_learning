@@ -30,7 +30,7 @@ def pca(X, var=0.95):
     total_variance = np.sum(eigenvals)
     cumulative_ratio = np.cumsum(eigenvals) / total_variance
 
-    r = np.searchsorted(cumulative_ratio, var) + 1
+    r = np.searchsorted(cumulative_ratio, var) + 2
 
     W = Vt[:r].T
 
