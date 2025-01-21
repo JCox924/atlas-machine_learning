@@ -26,7 +26,7 @@ def pca(X, var=0.95):
     """
     cov = np.cov(X, rowvar=False)
 
-    eig_vals, eig_vecs = np.linalg.eig(cov)
+    eig_vals, eig_vecs = np.linalg.eigh(cov)
 
     idx = np.argsort(eig_vals)[::-1]
     eig_vals_sorted = eig_vals[idx]
