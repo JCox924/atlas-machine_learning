@@ -23,16 +23,12 @@ def gmm(X, k):
             bic is a numpy.ndarray with one element for the single value of k
                  (i.e., shape (1,)) containing the BIC value
     """
-    gmm_model = sklearn.mixture.GaussianMixture(n_components=k)
-    gmm_model.fit(X)
+    gmm_model = sklearn.mixture.GaussianMixture(n_components=k).fit(X)
 
     pi = gmm_model.weights_
     m = gmm_model.means_
     S = gmm_model.covariances_
     clss = gmm_model.predict(X)
-
-    single_bic_value = gmm_model.bic(X)
-    bic = pi[:1].copy()
-    bic[0] = single_bic_value
+    bic = gmm_model.bic(X)
 
     return pi, m, S, clss, bic
