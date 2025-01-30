@@ -60,6 +60,6 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
         log_l_old = log_l
 
     if verbose:
-        print(f"Log Likelihood after {i + 1} iterations: {log_l:.5f}")
+        print(f"Log Likelihood after {i} iterations: {log_l:.5f}")
 
     return pi, m, S, g, log_l
