@@ -2,9 +2,7 @@
 """
 Calculates a GMM from a dataset using sklearn.mixture.GaussianMixture.
 """
-
 import sklearn.mixture
-import numpy as np
 
 
 def gmm(X, k):
@@ -34,6 +32,7 @@ def gmm(X, k):
     clss = gmm_model.predict(X)
 
     single_bic_value = gmm_model.bic(X)
-    bic = np.array([single_bic_value])
+    bic = pi[:1].copy()
+    bic[0] = single_bic_value
 
     return pi, m, S, clss, bic
