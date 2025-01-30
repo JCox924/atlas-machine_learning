@@ -16,8 +16,8 @@ def gmm(X, k):
     Returns:
         pi, m, S, clss, bic
             pi is a numpy.ndarray of shape (k,) containing the cluster priors
-            m is a numpy.ndarray of shape (k, d) containing the centroid means
-            S is a numpy.ndarray of shape (k, d, d) containing the covariance matrices
+            m is a numpy.ndarray of shape (k, d) containing centroid means
+            S is a numpy.ndarray of shape (k, d, d) containing the covariance
             clss is a numpy.ndarray of shape (n,) containing the cluster
                  indices for each data point
             bic is a numpy.ndarray with one element for the single value of k
