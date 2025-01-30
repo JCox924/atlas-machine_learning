@@ -12,7 +12,7 @@ def initialize(X, k):
 
     Arguments:
         X (numpy.ndarray): of shape (n, d), the data set
-        k (int): positive integer for the number of clusters
+        k (int): positive integer for the number of cluster
 
     Returns:
         pi, m, S or None, None, None on failure
