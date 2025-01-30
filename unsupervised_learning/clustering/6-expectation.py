@@ -11,10 +11,10 @@ def expectation(X, pi, m, S):
     Calculates the expectation step in the EM algorithm for a GMM.
 
     Args:
-        X (numpy.ndarray): of shape (n, d) containing the data set
-        pi (numpy.ndarray): of shape (k,) containing the priors for each cluster
-        m (numpy.ndarray): of shape (k, d) containing the centroid means for each cluster
-        S (numpy.ndarray): of shape (k, d, d) containing the covariance matrices for each cluster
+        X (numpy.ndarray): of shape (n, d) data set
+        pi (numpy.ndarray): of shape (k,) priors for each cluster
+        m (numpy.ndarray): of shape (k, d) centroid means
+        S (numpy.ndarray): of shape (k, d, d) covariance matrices
 
     Returns:
         g, l or None, None on failure
