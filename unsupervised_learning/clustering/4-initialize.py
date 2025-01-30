@@ -16,10 +16,9 @@ def initialize(X, k):
 
     Returns:
         pi, m, S or None, None, None on failure
-            pi: shape (k,) containing the priors for each cluster, initialized evenly
-            m: shape (k, d) containing the centroid means for each cluster
-            S: shape (k, d, d) containing the covariance matrices for each cluster,
-               initialized as identity matrices
+            pi: shape (k,) containing the priors
+            m: shape (k, d) centroid means for each cluster
+            S: shape (k, d, d) covariance matrices
     """
     if (not isinstance(X, np.ndarray) or X.ndim != 2 or
             not isinstance(k, int) or k <= 0 or
