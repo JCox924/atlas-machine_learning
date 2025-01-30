@@ -30,48 +30,32 @@ def kmeans(X, k, iterations=1000):
         return None, None
 
     n, d = X.shape
-    mins = X.min(axis=0)
-    maxs = X.max(axis=0)
 
-    C = np.random.uniform(mins, maxs, size=(k, d))
+    min_v = np.min(X, axis=0)
+    max_v = np.max(X, axis=0)
 
-    used_reinit = False
+    centroids = np.random.uniform(low=min_v, high=max_v, size=(k, d))
+
+    def assign_labels(data, centers):
+        distances = np.linalg.norm(data[:, None] - centers, axis=-1)
+        return np.argmin(distances, axis=-1)
 
     for _ in range(iterations):
+        labels = assign_labels(X, centroids)
 
-        distances = np.linalg.norm(X[:, None] - C, axis=2)
-
-        clss = np.argmin(distances, axis=1)
-
-        old_C = C.copy()
-
-        new_C = np.zeros_like(C)
-
-        empty_clusters = []
-        for cluster_idx in range(k):
-            points_in_cluster = X[clss == cluster_idx]
+        new_centroids = np.zeros((k, d))
+        for i in range(k):
+            points_in_cluster = X[labels == i]
             if len(points_in_cluster) == 0:
-                empty_clusters.append(cluster_idx)
+                new_centroids[i] = np.random.uniform(low=min_v, high=max_v, size=d)
             else:
-                new_C[cluster_idx] = points_in_cluster.mean(axis=0)
+                new_centroids[i] = points_in_cluster.mean(axis=0)
 
-        if empty_clusters and not used_reinit:
-            reinit_vals = np.random.uniform(mins, maxs,
-                                            size=(len(empty_clusters), d))
-            used_reinit = True
-            for i, cluster_idx in enumerate(empty_clusters):
-                new_C[cluster_idx] = reinit_vals[i]
-        else:
-            for cluster_idx in empty_clusters:
-                new_C[cluster_idx] = old_C[cluster_idx]
+        if np.allclose(new_centroids, centroids):
+            labels = assign_labels(X, centroids)
+            return centroids, labels
 
-        if np.allclose(old_C, new_C):
-            C = new_C
-            break
+        centroids = new_centroids
 
-        C = new_C
-
-    distances = np.linalg.norm(X[:, None] - C, axis=2)
-    clss = np.argmin(distances, axis=1)
-
-    return C, clss
+    labels = assign_labels(X, centroids)
+    return centroids, labels
