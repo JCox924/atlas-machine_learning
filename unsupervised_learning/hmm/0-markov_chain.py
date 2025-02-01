@@ -15,16 +15,18 @@ def markov_chain(P, s, t=1) -> np.ndarray:
         P (numpy.ndarray):
             square 2D numpy.ndarray of shape (n, n)
             representing the transition matrix
-                P[i, j] is the probability of transitioning from state i to state j
-                n is the number of states in the markov chain
+                P[i, j], is the probability of transitioning
+                    from state i to state j
+                n, is the number of states in the markov chain
         s (numpy.ndarray):
             ndarray of shape (1, n) representing
             the probability of starting in each state
-        t (int):
+        t (int): The number of iterations (transitions) of the Markov chain.
 
     Returns:
-         (numpy.ndarray): (1, n) shape matrix representing
-            the markov chain after t iterations
+         (numpy.ndarray): (1, n) shape matrix  representing the probability
+            of being in a specific state after t iterations,
+            or None on failure
     """
     if (not isinstance(P, np.ndarray)) or (not isinstance(s, np.ndarray) or
             P.dim != 2 or s.ndim != 2 or P.shape[0] != P.shape[1] or
@@ -32,7 +34,10 @@ def markov_chain(P, s, t=1) -> np.ndarray:
             not isinstance(t, int) or t < 0):
         return None
 
-    P_t = np.linalg.matrix_power(P, t)
-    m_chain = np.dot(s, P_t)
+    try:
+        P_t = np.linalg.matrix_power(P, t)
+        m_chain = np.dot(s, P_t)
+    except Exception:
+        return None
 
     return m_chain
