@@ -12,22 +12,30 @@ def forward(Observation, Emission, Transition, Initial):
     Performs the forward algorithm for a hidden Markov model.
 
     Arguments:
-        Observation (numpy.ndarray): A numpy.ndarray of shape (T,) that contains
-            the index of each observation.
-        Emission (numpy.ndarray): A numpy.ndarray of shape (N, M) containing the
-            emission probabilities. Emission[i, j] is the probability of observing j
+        Observation (numpy.ndarray): A numpy.ndarray of
+         shape (T,) that contains
+        the index of each observation.
+        Emission (numpy.ndarray): A numpy.ndarray of shape
+        (N, M) containing the
+            emission probabilities. Emission[i, j] is the
+            probability of observing j
             given the hidden state i.
-        Transition (numpy.ndarray): A 2D numpy.ndarray of shape (N, N) containing the
-            transition probabilities. Transition[i, j] is the probability of transitioning
+        Transition (numpy.ndarray): A 2D numpy.ndarray
+            of shape (N, N) containing the
+            transition probabilities. Transition[i, j]
+            is the probability of transitioning
             from hidden state i to j.
-        Initial (numpy.ndarray): A numpy.ndarray of shape (N, 1) containing the initial
+        Initial (numpy.ndarray): A numpy.ndarray of shape (N, 1)
+        containing the initial
             state probabilities.
 
     Returns:
         P: The likelihood of the observations given the model.
-        F: A numpy.ndarray of shape (N, T) containing the forward path probabilities,
-           where F[i, t] is the probability of being in hidden state i at time t given
-           the previous observations.
+        F: A numpy.ndarray of shape (N, T) containing
+            the forward path probabilities,
+            where F[i, t] is the probability of being
+            in hidden state i at time t given
+            the previous observations.
         If any error occurs or inputs are invalid, returns (None, None).
     """
     if not (isinstance(Observation, np.ndarray) and Observation.ndim == 1 and
