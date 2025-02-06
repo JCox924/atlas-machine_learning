@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+Module 6-baum_welch contains function:
+    baum_welch(Observations, Transition, Emission, Initial, iterations=1000)
+"""
 import numpy as np
 
 
