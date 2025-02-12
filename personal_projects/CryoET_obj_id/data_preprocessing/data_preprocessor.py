@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import zarr
-from torch import dtype
+
 
 from data_preprocessing.utils import load_annotations, generate_heatmap
 
@@ -174,6 +174,9 @@ def get_dataset(
             if augmentations:
                 for aug in augmentations:
                     patch, one_hot_labels = aug(patch, one_hot_labels)
+
+            print(f"Patch shape after augmentations: {patch.shape}")
+            print(f"One-hot labels shape after augmentations: {one_hot_labels.shape}")
 
             yield patch, one_hot_labels
 

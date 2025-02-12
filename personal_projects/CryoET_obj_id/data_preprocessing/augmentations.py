@@ -85,22 +85,58 @@ def create_rotation_matrix(angle, axis1, axis2):
     return rotation_matrix
 
 
-def rotate_3d_annotations(coords, image_shape, k, axes):
-    print("Original coords shape:", coords.shape)
-    coords = tf.reshape(coords, [-1, 3])  # Flatten to [N, 3]
-    print("Reshaped coords shape:", coords.shape)
+def rotate_3d_annotations(annotations, image_shape, k, axes):
+    """
+    Rotate 3D annotations (coordinates) by 90-degree increments.
 
-    # Define the rotation matrix
-    rotation_matrix = tf.linalg.diag([1.0] * 3)  # Correct method for diagonal matrix
-    print("Rotation matrix shape:", rotation_matrix.shape)
+    Args:
+    - annotations: Tensor of shape [N, 4] where the first three columns are (z, y, x).
+    - image_shape: Shape of the image tensor.
+    - k: Number of 90-degree rotations (0, 1, 2, or 3).
+    - axes: Axes along which to perform the rotation (e.g., (1, 2) for y and x).
 
-    # Apply rotation
-    rotated_coords = tf.matmul(coords, rotation_matrix)
-    return rotated_coords
+    Returns:
+    - Rotated annotations: Tensor of shape [N, 4] with rotated coordinates.
+    """
+    coords = annotations[:, :3]  # Extract (z, y, x) coordinates
+    particle_types = annotations[:, 3:]  # Extract particle types if present
+
+    # Select axes for rotation
+    axis1, axis2 = axes
+
+    # Define rotation matrices for 90-degree increments
+    if k == 1:  # 90 degrees
+        rotation_matrix = tf.constant([[0, -1], [1, 0]], dtype=tf.float32)
+    elif k == 2:  # 180 degrees
+        rotation_matrix = tf.constant([[-1, 0], [0, -1]], dtype=tf.float32)
+    elif k == 3:  # 270 degrees
+        rotation_matrix = tf.constant([[0, 1], [-1, 0]], dtype=tf.float32)
+    else:  # 0 degrees (no rotation)
+        return annotations
+
+    # Extract and rotate coordinates along the specified axes
+    coords_to_rotate = tf.stack([coords[:, axis1], coords[:, axis2]], axis=1)  # Shape: [N, 2]
+    rotated_coords = tf.matmul(coords_to_rotate, rotation_matrix)  # Shape: [N, 2]
+
+    # Update the rotated coordinates into the original coordinates tensor
+    coords_rotated = tf.identity(coords)
+    coords_rotated = tf.tensor_scatter_nd_update(
+        coords_rotated,
+        tf.expand_dims(tf.range(tf.shape(coords_rotated)[0]), axis=-1),
+        tf.concat([coords[:, :axis1], rotated_coords[:, :], coords[:, axis2 + 1:]], axis=1)
+    )
+
+    # Combine the rotated coordinates with particle types (if any)
+    if particle_types.shape[1] > 0:  # Check if particle_types is not empty
+        rotated_annotations = tf.concat([coords_rotated, particle_types], axis=1)
+    else:
+        rotated_annotations = coords_rotated
+
+    return rotated_annotations
 
 def random_rotate_90(image, annotations_with_types):
     """
-    Randomly rotates a 3D image and its annotations by 90 degrees along two axes.
+    Randomly rotates a 3D image and its annotations by 90-degree increments.
 
     Args:
     - image: 3D image tensor of shape [depth, height, width, channels].
@@ -110,7 +146,6 @@ def random_rotate_90(image, annotations_with_types):
     - Rotated image.
     - Rotated annotations_with_types.
     """
-    # Choose random axes and number of rotations
     axes = (1, 2)  # Example: rotate along y and x axes
     k = tf.random.uniform([], minval=0, maxval=4, dtype=tf.int32)
 
@@ -119,7 +154,10 @@ def random_rotate_90(image, annotations_with_types):
 
     # Rotate the annotations
     image_shape = tf.shape(image)
-    rotated_annotations = rotate_3d_annotations(annotations_with_types, image_shape, k, axes)
+    if tf.size(annotations_with_types) > 0:  # Ensure annotations are not empty
+        rotated_annotations = rotate_3d_annotations(annotations_with_types, image_shape, k, axes)
+    else:
+        rotated_annotations = annotations_with_types
 
     return rotated_image, rotated_annotations
 
