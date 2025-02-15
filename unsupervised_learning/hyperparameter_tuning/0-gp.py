@@ -39,5 +39,4 @@ class GaussianProcess:
             covariance kernel matrix as a numpy.ndarray of shape (m, n)
         """
         sqdist = (X1 - X2.T) ** 2
-
-        return (self.sigma_f ** 2) * np.exp(( -0.5 * sqdist) / (self.l ** 2))
+        return self.sigma_f ** 2 * np.exp(-sqdist / (2 * self.l ** 2))
