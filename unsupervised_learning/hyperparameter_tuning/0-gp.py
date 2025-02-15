@@ -29,7 +29,6 @@ class GaussianProcess:
         self.sigma_f = sigma_f
         self.K = self.kernel(X_init, Y_init)
 
-
     def kernel(self, X1, X2):
         """
         calculates the covariance kernel matrix between two matrices
@@ -41,4 +40,4 @@ class GaussianProcess:
         """
         sqdist = (X1 - X2.T) ** 2
 
-        return self.sigma_f ** 2 * np.exp(-0.5 * sqdist / self.l ** 2)
+        return (self.sigma_f ** 2) * np.exp(( -0.5 * sqdist) / (self.l ** 2))
