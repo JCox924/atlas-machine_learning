@@ -23,8 +23,8 @@ Follow these steps to install and set up the environment.
 ### Clone this repository:
 
 ```bash
-git clone https://github.com/username/cryoet-od.git
-cd cryoet-od
+git clone https://github.com/JCox924/atlas-machine_learning/personal_projects/CryoET_obj_id.git
+cd CryoET_obj_id
 ```
 ### Create and activate a Python 3.10 environment (using conda):
 
