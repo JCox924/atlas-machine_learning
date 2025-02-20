@@ -108,8 +108,8 @@ class BayesianOptimization:
             Y_opt (numpy.ndarray): represents the optimal function value
         """
         for _ in range(iterations):
-            X_next, _ = self.acquisition()
-            if np.any(np.isclose(self.gp.X.flatten(), X_next, atol=1e-8)):
+            X_next, EI = self.acquisition()
+            if np.max(EI) < 1e-6:
                 break
             Y_next = self.f(X_next)
             self.gp.update(X_next, Y_next)
@@ -119,6 +119,6 @@ class BayesianOptimization:
         else:
             idx_opt = np.argmax(self.gp.Y)
 
-        X_opt, Y_opt = self.X_s[idx_opt], self.gp.Y[idx_opt]
+        X_opt, Y_opt = self.gp.X[idx_opt], self.gp.Y[idx_opt]
 
         return X_opt, Y_opt
