@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from gensim.models import Word2Vec
+import gensim
 
 
 def word2vec_model(sentences, vector_size=100, min_count=5, window=5, negative=5,
@@ -23,8 +23,7 @@ def word2vec_model(sentences, vector_size=100, min_count=5, window=5, negative=5
         gensim.models.Word2Vec: The trained Word2Vec model.
     """
     sg = 0 if cbow else 1
-
-    model = Word2Vec(
+    model = gensim.modelsWord2Vec(
         vector_size=vector_size,
         window=window,
         min_count=min_count,
@@ -33,9 +32,6 @@ def word2vec_model(sentences, vector_size=100, min_count=5, window=5, negative=5
         seed=seed,
         workers=workers
     )
-
     model.build_vocab(sentences)
-
     model.train(sentences, total_examples=model.corpus_count, epochs=epochs)
-
     return model
