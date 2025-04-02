@@ -1,70 +1,82 @@
 #!/usr/bin/env python3
-import re
+""" Term Frequency-Inverse Document Frequency """
 import numpy as np
+from collections import Counter
+import re
+import math
 
 
 def tf_idf(sentences, vocab=None):
-    """
-    Create a TF-IDF embedding matrix for a list of sentences.
-
-    Args:
-        sentences (list of str): The sentences to analyze.
-        vocab (list of str, optional): A list of vocabulary words to use for the analysis.
-            If None, all unique words from the sentences are used.
-            Words are normalized to lowercase and punctuation is removed.
-
-    Returns:
-        tuple: A tuple (embeddings, features) where:
-            - embeddings (numpy.ndarray): An array of shape (s, f) where s is the number of sentences and
-              f is the number of features. Each entry [i, j] contains the normalized TF-IDF value for the j-th feature
-              in the i-th sentence.
-            - features (list): The list of vocabulary words (features) used for the embeddings.
-              If vocab is provided, the same order is preserved; otherwise, features are sorted alphabetically.
-
-    TF-IDF is computed using the smoothed formula:
-        idf(word) = log((1 + N) / (1 + df(word))) + 1
-    where N is the number of sentences and df(word) is the number of sentences containing the word.
-    Each sentence’s TF-IDF vector is then L2 normalized.
-    """
-    processed_sentences = []
-    all_words = []
+    """ Create a TF-IDF embedding matrix."""
+    # preprocess to get words
+    words_in_sentences = []
     for sentence in sentences:
-        words = re.findall(r'\b[a-z]+\b', sentence.lower())
-        words = [word for word in words if word != 's']
-        processed_sentences.append(words)
-        all_words.extend(words)
+        clean_sentence = re.sub(r'\'s\b|\'\b', '', sentence.lower())
+        clean_sentence = re.sub(r'[^\w\s]', '', clean_sentence)
+        words = clean_sentence.split()
+        words_in_sentences.append(words)
 
     if vocab is None:
-        features = sorted(set(all_words))
+        # flatten the list of words from all sentences
+        all_words = [word for words in words_in_sentences for word in words]
+        # unique words, sort for consistency
+        vocab = sorted(set(all_words))
     else:
-        features = vocab
+        # vocab is provided, clean it too to be consistent
+        cleaned_vocab = []
+        for word in vocab:
+            word = re.sub(r'\'s\b|\'\b', '', word.lower())
+            word = re.sub(r'[^\w\s]', '', word)
+            if word:  # Only add non-empty strings
+                cleaned_vocab.append(word)
+        # remove duplicates that might result from cleaning
+        # don't sort?
+        vocab = cleaned_vocab
 
-    feature_to_index = {word: idx for idx, word in enumerate(features)}
+    # convert features to a numpy array
+    features = np.array(vocab)
 
-    N = len(sentences)
+    # calculate document frequency for each word
+    document_frequency = {}
+    for word in features:
+        document_frequency[word] = sum(1 for sentence_words in
+                                       words_in_sentences
+                                       if word in set(sentence_words))
 
-    df = np.zeros(len(features), dtype=float)
-    for words in processed_sentences:
+    # total number of documents (sentences)
+    num_documents = len(sentences)
+
+    # init embedding matrix with zeros (as FLOATS for TF-IDF values)
+    embeddings = np.zeros((len(sentences), len(features)), dtype=np.float64)
+
+    # fill embedding matrix with TF-IDF values
+    for i, words in enumerate(words_in_sentences):
+        # get unique words for this document (sentence)
         unique_words = set(words)
-        for word in unique_words:
-            if word in feature_to_index:
-                df[feature_to_index[word]] += 1
 
-    idf = np.log((1 + N) / (1 + df)) + 1
+        # get total count of words in this sentence
+        total_words = len(words)
 
-    embeddings = np.zeros((N, len(features)), dtype=float)
+        # count occurrences of each word (term frequency)
+        word_counts = Counter(words)
 
-    for i, words in enumerate(processed_sentences):
-        tf = {}
-        for word in words:
-            if word in feature_to_index:
-                tf[word] = tf.get(word, 0) + 1
-        for word, count in tf.items():
-            j = feature_to_index[word]
-            embeddings[i, j] = count * idf[j]
+        # calculate TF-IDF for each word in the vocabulary
+        for j, word in enumerate(features):
+            if word in word_counts:
+                # term frequency is the count in this document
+                tf = word_counts[word] / total_words
 
+                # inverse document frequency:
+                # log((1 + N) / (1 + df)) + 1
+                idf = math.log((1 + num_documents) / (1 +
+                               document_frequency[word])) + 1
+
+                # TF-IDF value
+                embeddings[i, j] = tf * idf
+
+    for i in range(len(sentences)):
         norm = np.linalg.norm(embeddings[i])
-        if norm > 0:
-            embeddings[i] /= norm
+        if norm > 0:  # no division by zero
+            embeddings[i] = embeddings[i] / norm
 
     return embeddings, features
