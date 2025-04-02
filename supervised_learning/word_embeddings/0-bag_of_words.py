@@ -1,47 +1,48 @@
 #!/usr/bin/env python3
 """
-Module 0-bag_of_words contains:
-    functions:
-        - bag_of_words(sentences, vocab=None)
+Bag of Words embedding
 """
-import re
 import numpy as np
+from collections import Counter
+import re
 
 def bag_of_words(sentences, vocab=None):
     """
-    Create a bag-of-words embedding matrix for a list of sentences.
+    Creates a bag of words embedding matrix
 
     Args:
-        sentences (list of str): The sentences to analyze.
-        vocab (list of str, optional): A list of vocabulary words to use for the analysis.
-                                       If None, all unique words from the sentences are used.
-                                       Words are normalized to lowercase and punctuation is removed.
+        sentences (list): list of sentences to analyze
+        vocab (list): vocabulary words to use; if None, extract from sentences
 
     Returns:
-        tuple: A tuple (embeddings, features) where:
-            - embeddings (numpy.ndarray): An array of shape (s, f) where s is the number of sentences
-              and f is the number of features. Each entry [i, j] contains the count of the j-th feature
-              in the i-th sentence.
-            - features (list of str): The list of vocabulary words (features) used for the embeddings,
-              sorted in alphabetical order.
+        embeddings (np.ndarray): shape (s, f), the embeddings matrix
+        features (list): list of features used (words)
     """
-    tokenized_sentences = []
-    word_set = set()
-
+    words_in_sentences = []
     for sentence in sentences:
-        tokens = re.findall(r"\b\w+\b", sentence.lower())
-        tokenized_sentences.append(tokens)
-        if vocab is None:
-            word_set.update(tokens)
+        clean_sentence = re.sub(r"'s\b|'\b", '', sentence.lower())
+        clean_sentence = re.sub(r"[^\w\s]", '', clean_sentence)
+        words = clean_sentence.split()
+        words_in_sentences.append(words)
 
-    features = sorted(vocab if vocab is not None else word_set)
-    word_idx = {word: idx for idx, word in enumerate(features)}
+    if vocab is None:
+        all_words = [word for words in words_in_sentences for word in words]
+        vocab = sorted(set(all_words))
+    else:
+        cleaned_vocab = []
+        for word in vocab:
+            word = re.sub(r"'s\b|'\b", '', word.lower())
+            word = re.sub(r"[^\w\s]", '', word)
+            if word:
+                cleaned_vocab.append(word)
+        vocab = cleaned_vocab
 
+    features = np.array(vocab)
     embeddings = np.zeros((len(sentences), len(features)), dtype=int)
 
-    for i, tokens in enumerate(tokenized_sentences):
-        for word in tokens:
-            if word in word_idx:
-                embeddings[i][word_idx[word]] += 1
+    for i, words in enumerate(words_in_sentences):
+        word_counts = Counter(words)
+        for j, word in enumerate(features):
+            embeddings[i, j] = word_counts[word]
 
-    return embeddings, features
+    return embeddings, features.tolist()
