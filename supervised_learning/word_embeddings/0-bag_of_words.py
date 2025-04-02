@@ -25,26 +25,23 @@ def bag_of_words(sentences, vocab=None):
             - features (list of str): The list of vocabulary words (features) used for the embeddings,
               sorted in alphabetical order.
     """
-    processed_sentences = []
-    all_words = []
+    tokenized_sentences = []
+    word_set = set()
+
     for sentence in sentences:
-        words = re.findall(r'\b[a-z]+\b', sentence.lower())
-        words = [word for word in words if word != 's']
-        processed_sentences.append(words)
-        all_words.extend(words)
+        tokens = re.findall(r"\b\w+\b", sentence.lower())
+        tokenized_sentences.append(tokens)
+        if vocab is None:
+            word_set.update(tokens)
 
-    if vocab is None:
-        features = sorted(set(all_words))
-    else:
-        features = vocab
-
-    feature_to_index = {word: idx for idx, word in enumerate(features)}
+    features = sorted(vocab if vocab is not None else word_set)
+    word_idx = {word: idx for idx, word in enumerate(features)}
 
     embeddings = np.zeros((len(sentences), len(features)), dtype=int)
 
-    for i, words in enumerate(processed_sentences):
-        for word in words:
-            if word in feature_to_index:
-                embeddings[i, feature_to_index[word]] += 1
+    for i, tokens in enumerate(tokenized_sentences):
+        for word in tokens:
+            if word in word_idx:
+                embeddings[i][word_idx[word]] += 1
 
     return embeddings, features
