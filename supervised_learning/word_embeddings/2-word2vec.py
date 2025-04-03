@@ -22,16 +22,11 @@ def word2vec_model(sentences, vector_size=100, min_count=5, window=5, negative=5
     Returns:
         gensim.models.Word2Vec: The trained Word2Vec model.
     """
-    sg = 0 if cbow else 1
-    model = gensim.models.Word2Vec(
-        vector_size=vector_size,
-        window=window,
-        min_count=min_count,
-        sg=sg,
-        negative=negative,
-        seed=seed,
-        workers=workers
-    )
-    model.build_vocab(sentences)
-    model.train(sentences, total_examples=model.corpus_count, epochs=epochs)
+    model = gensim.models.Word2Vec(sentences, min_count=min_count,
+                                   iter=epochs, size=vector_size,
+                                   window=window, negative=negative,
+                                   seed=seed, sg=cbow, workers=workers)
+    model.train(sentences, total_examples=model.corpus_count,
+                epochs=model.iter)
+
     return model
