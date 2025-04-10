@@ -2,8 +2,10 @@
 """
 Module that implements a bag-of-words embedding matrix generator.
 
-This module provides a function bag_of_words that converts a list of sentences
-into a bag-of-words embedding matrix using a specified or derived vocabulary.
+This module provides a function bag_of_words that
+converts a list of sentences
+into a bag-of-words embedding matrix using a
+specified or derived vocabulary.
 """
 
 import numpy as np
@@ -41,7 +43,8 @@ def bag_of_words(sentences, vocab=None):
 
     Args:
         sentences (list[str]): A list of sentences to analyze.
-        vocab (list[str] or None): A list of vocabulary words to use. If None, all words
+        vocab (list[str] or None): A list of v
+        ocabulary words to use. If None, all words
             found in the sentences are used.
 
     Returns:
