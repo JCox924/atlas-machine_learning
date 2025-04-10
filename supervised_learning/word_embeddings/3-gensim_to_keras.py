@@ -6,7 +6,7 @@ This module provides the function gensim_to_keras which extracts the weight matr
 trained gensim Word2Vec model and creates a Keras Embedding layer initialized with these weights.
 The embedding layer is trainable.
 """
-from tensorflow.keras.layers import Embedding
+import tensorflow as tf
 
 
 def gensim_to_keras(model):
@@ -27,7 +27,7 @@ def gensim_to_keras(model):
     weights = model.wv.vectors
     vocab_size, embedding_dim = weights.shape
 
-    keras_embedding = Embedding(input_dim=vocab_size,
+    keras_embedding = tf.keras.layers.Embedding(input_dim=vocab_size,
                                 output_dim=embedding_dim,
                                 weights=[weights],
                                 trainable=True)
