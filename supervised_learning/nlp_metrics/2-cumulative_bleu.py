@@ -11,14 +11,18 @@ def cumulative_bleu(references, sentence, n):
     """
     Calculates the cumulative n-gram BLEU score for a candidate sentence.
 
-    The score is computed as the product of the brevity penalty and the geometric
-    mean of the n-gram precisions from 1-gram up to n-gram. All n-gram precisions
+    The score is computed as the product of
+    the brevity penalty and the geometric
+    mean of the n-gram precisions from 1-gram
+    up to n-gram. All n-gram precisions
     are weighted evenly.
 
     Args:
-        references (list[list[str]]): A list of reference translations, where each
+        references (list[list[str]]): A list of
+        reference translations, where each
             reference is represented as a list of words.
-        sentence (list[str]): The candidate sentence as a list of words.
+        sentence (list[str]): The candidate sentence
+        as a list of words.
         n (int): The maximum n-gram order to use for evaluation.
 
     Returns:
@@ -72,7 +76,8 @@ def cumulative_bleu(references, sentence, n):
 
     c = len(sentence)
     ref_lens = [len(ref) for ref in references]
-    best_ref_len = min(ref_lens, key=lambda ref_len: (abs(ref_len - c), ref_len))
+    best_ref_len = min(ref_lens,
+                       key=lambda ref_len: (abs(ref_len - c), ref_len))
     bp = 1 if c > best_ref_len else math.exp(1 - best_ref_len / c)
 
     return bp * geo_mean

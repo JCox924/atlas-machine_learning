@@ -29,15 +29,12 @@ def ngram_bleu(references, sentence, n):
         """
         return [tuple(words[i:i+n]) for i in range(len(words) - n + 1)]
 
-    # Create candidate n-grams and count their occurrences
     sentence_ngrams = get_ngrams(sentence, n)
     cand_counts = Counter(sentence_ngrams)
 
-    # If there are no n-grams, return 0.0 to avoid division by zero
     if len(sentence_ngrams) == 0:
         return 0.0
 
-    # Count the maximum n-gram occurrences in the reference translations
     max_ref_counts = {}
     for ref in references:
         ref_ngrams = get_ngrams(ref, n)
@@ -57,7 +54,8 @@ def ngram_bleu(references, sentence, n):
 
     c = len(sentence)
     ref_lens = [len(ref) for ref in references]
-    best_ref_len = min(ref_lens, key=lambda ref_len: (abs(ref_len - c), ref_len))
+    best_ref_len = min(ref_lens,
+                       key=lambda ref_len: (abs(ref_len - c), ref_len))
     bp = 1 if c > best_ref_len else math.exp(1 - best_ref_len / c)
 
     return bp * precision
