@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Module that implements a function to create and train a gensim fastText model.
+Module that implements a function to create
+and train a gensim fastText model.
 
 This module provides the function fasttext_model
 which builds and trains a fastText
 model on a list of sentences with configurable parameters.
 """
-
-from gensim.models import FastText
+import gensim
 
 
 def fasttext_model(sentences,
@@ -23,12 +23,16 @@ def fasttext_model(sentences,
     Creates, builds, and trains a gensim fastText model.
 
     Args:
-        sentences (list[list[str]]): A list of tokenized sentences to train on.
+        sentences (list[list[str]]): A list of
+            tokenized sentences to train on.
         vector_size (int): Dimensionality of the embedding vectors.
-        min_count (int): Minimum number of occurrences for a word to be included in training.
+        min_count (int): Minimum number of
+            occurrences for a word to be included in training.
         negative (int): Size of negative sampling.
-        window (int): Maximum distance between the current and predicted word within a sentence.
-        cbow (bool): If True, use Continuous Bag-of-Words (CBOW) model; if False, use Skip-gram.
+        window (int): Maximum distance between the current
+            and predicted word within a sentence.
+        cbow (bool): If True, use Continuous
+            Bag-of-Words (CBOW) model; if False, use Skip-gram.
         epochs (int): Number of training iterations over the corpus.
         seed (int): Seed for the random number generator.
         workers (int): Number of worker threads to train the model.
@@ -38,7 +42,7 @@ def fasttext_model(sentences,
     """
     sg = 0 if cbow else 1
 
-    model = FastText(vector_size=vector_size,
+    model = gensim.models.FastText(vector_size=vector_size,
                      window=window,
                      min_count=min_count,
                      workers=workers,
