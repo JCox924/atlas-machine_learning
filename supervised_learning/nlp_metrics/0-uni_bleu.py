@@ -56,4 +56,3 @@ def uni_bleu(references, sentence):
     bp = 1 if c > best_ref_len else math.exp(1 - best_ref_len / c)
 
     return bp * precision
-
