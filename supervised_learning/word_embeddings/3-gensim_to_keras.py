@@ -24,6 +24,7 @@ def gensim_to_keras(model):
         tensorflow.keras.layers.Embedding: A trainable Keras Embedding layer initialized with
         the gensim model's weights.
     """
+    _ = model.wv.index_to_key
     weights = model.wv.vectors
     vocab_size, embedding_dim = weights.shape
 
