@@ -7,9 +7,8 @@ for machine translation. Creates sub-word tokenizers
 based on pretrained BERT tokenizers, limited to 2**13 tokens.
 """
 
-import tensorflow as tf
 import tensorflow_datasets as tfds
-from transformers import BertTokenizerFast
+import transformers
 
 
 class Dataset:
@@ -44,8 +43,8 @@ class Dataset:
     def tokenize_dataset(self, data):
         """
         Creates and trains two BertTokenizerFast instances:
-        - Portuguese:  pretrained on 'neuralmind/bert-base-portuguese-cased'
-        - English:     pretrained on 'bert-base-uncased'
+        - Portuguese: pretrained on 'neuralmind/bert-base-portuguese-cased'
+        - English:    pretrained on 'bert-base-uncased'
         Both are retrained on `data` up to vocab_size=2**13.
 
         Args:
@@ -56,10 +55,10 @@ class Dataset:
             tokenizer_en (BertTokenizerFast)
         """
         # Load pretrained fast tokenizers
-        tokenizer_pt = BertTokenizerFast.from_pretrained(
+        tokenizer_pt = transformers.BertTokenizerFast.from_pretrained(
             'neuralmind/bert-base-portuguese-cased'
         )
-        tokenizer_en = BertTokenizerFast.from_pretrained(
+        tokenizer_en = transformers.BertTokenizerFast.from_pretrained(
             'bert-base-uncased'
         )
 
