@@ -20,8 +20,10 @@ def create_masks(inputs, target):
     Returns:
         encoder_mask (tf.Tensor): shape (batch_size, 1, 1, seq_len_in);
             padding mask for the encoder.
-        combined_mask (tf.Tensor): shape (batch_size, 1, seq_len_out, seq_len_out);
-            padding + look-ahead mask for the decoder’s first attention block.
+        combined_mask (tf.Tensor): shape
+         (batch_size, 1, seq_len_out, seq_len_out);
+            padding + look-ahead mask for the
+            decoder’s first attention block.
         decoder_mask (tf.Tensor): shape (batch_size, 1, 1, seq_len_in);
             padding mask for the decoder’s second attention block.
     """
@@ -36,7 +38,10 @@ def create_masks(inputs, target):
     )
 
     dec_target_padding_mask = tf.cast(tf.equal(target, 0), tf.float32)
-    dec_target_padding_mask = dec_target_padding_mask[:, tf.newaxis, tf.newaxis, :]
+    dec_target_padding_mask = (
+                                  dec_target_padding_mask)[:,
+                              tf.newaxis,
+                              tf.newaxis, :]
 
     combined_mask = tf.maximum(
         dec_target_padding_mask,
