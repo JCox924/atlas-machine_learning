@@ -117,3 +117,5 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 ---
 
 *Developed by Joshua Cox*
+
+[Linkedin](https://www.linkedin.com/in/joshuacox918/)
