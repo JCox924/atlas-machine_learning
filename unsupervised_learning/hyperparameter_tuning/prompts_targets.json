@@ -1,0 +1,28 @@
+{
+  "examples": [
+    {
+      "prompt": "Prove that there are infinitely many prime numbers.",
+      "target_text": "Proof by contradiction: Assume there are finitely many primes p₁, p₂, …, pₙ. Consider Q = p₁ × p₂ × … × pₙ + 1. Since Q leaves a remainder of 1 when divided by any pᵢ, none of the known primes can divide Q. Therefore, Q is either prime or has a prime factor not in the list, contradicting the assumption. Hence, there are infinitely many primes."
+    },
+    {
+      "prompt": "Evaluate the infinite series ∑ₙ₌₁∞ 1/n².",
+      "target_text": "The series converges to π²/6. This result, first proven by Euler, shows that the sum of the reciprocals of the squares of the natural numbers is exactly π²/6."
+    },
+    {
+      "prompt": "Derive Binet's Formula for the Fibonacci numbers.",
+      "target_text": "Binet's Formula states that F(n) = (φⁿ - ψⁿ)/√5, where φ = (1 + √5)/2 and ψ = (1 - √5)/2. This formula is derived by solving the characteristic equation of the recurrence relation F(n) = F(n-1) + F(n-2)."
+    },
+    {
+      "prompt": "Describe the time complexity of the quicksort algorithm and explain the worst-case scenario.",
+      "target_text": "Quicksort typically has an average time complexity of O(n log n) due to effective partitioning. However, if the pivot is chosen poorly—such as always selecting the smallest or largest element—the algorithm can degrade to a worst-case time complexity of O(n²)."
+    },
+    {
+      "prompt": "Implement a Python function to check if a string is a palindrome.",
+      "target_text": "A straightforward implementation is:\n\n```python\ndef is_palindrome(s):\n    s = s.lower().replace(' ', '')\n    return s == s[::-1]\n```\n\nThis function converts the string to lowercase, removes spaces, and checks if the string reads the same forwards and backwards."
+    },
+    {
+      "prompt": "Explain how to detect a cycle in a linked list and discuss its time complexity.",
+      "target_text": "One common method is Floyd’s Tortoise and Hare algorithm. It uses two pointers that traverse the list at different speeds. If there is a cycle, the fast pointer will eventually meet the slow pointer. This algorithm runs in O(n) time and requires O(1) additional space."
+    }
+  ]
+}

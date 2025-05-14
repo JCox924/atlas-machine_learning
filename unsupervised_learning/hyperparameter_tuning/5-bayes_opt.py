@@ -109,10 +109,11 @@ class BayesianOptimization:
         """
         for _ in range(iterations):
             X_next, EI = self.acquisition()
-            if np.max(EI) < 1e-6:
+            if np.max(EI) < 1e-8:
                 break
             Y_next = self.f(X_next)
-            self.gp.update(X_next, Y_next)
+            self.gp.update(X_next.reshape(-1, 1),
+                           np.array([Y_next]).reshape(-1, 1))
 
         if self.minimize:
             idx_opt = np.argmin(self.gp.Y)
