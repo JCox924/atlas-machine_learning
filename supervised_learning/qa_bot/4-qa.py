@@ -6,7 +6,6 @@ Multi-document question-answering loop using semantic search
 and the pretrained QA model.
 """
 
-# Import necessary functions
 question_answer_single = __import__('0-qa').question_answer
 semantic_search = __import__('3-semantic_search').semantic_search
 
