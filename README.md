@@ -109,7 +109,7 @@ Contributions are welcome! Please:
 5. Open a pull request
 
 Ensure all new code follows existing style, includes tests, and has clear documentation.
-
+|
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
