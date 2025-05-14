@@ -21,20 +21,24 @@ def play(env, Q, max_steps=100):
     rendered_outputs = []
 
     for step in range(max_steps):
-        board = env.render()
+        board_state = env.render()
 
         action = np.argmax(Q[state])
 
         action_names = {0: "Left", 1: "Down", 2: "Right", 3: "Up"}
+        action_str = action_names[action]
 
-        rendered_outputs.append(f"{board}\n  ({action_names[action]})")
+        output = f"{board_state}\n  ({action_str})"
+        rendered_outputs.append(output)
 
         next_state, reward, done, truncated, _ = env.step(action)
+
         state = next_state
         total_rewards += reward
 
         if done or truncated:
-            rendered_outputs.append(env.render())
+            final_state = env.render()
+            rendered_outputs.append(final_state)
             break
 
     return total_rewards, rendered_outputs
