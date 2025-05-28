@@ -64,6 +64,6 @@ def sarsa_lambtha(env,
             if terminated or truncated:
                 break
 
-        epsilon_curr = max(min_epsilon, epsilon_curr - np.exp(-epsilon_decay))
+        epsilon_curr = max(min_epsilon, epsilon_curr * np.exp(-epsilon_decay))
 
     return Q
