@@ -1,50 +1,49 @@
-#!/usr/bin/env python3
-"""performs the Monte Carlo algorithm"""
-
 import numpy as np
 
 
-def monte_carlo(env, V, policy,
-                episodes=5000, max_steps=100,
-                alpha=0.1, gamma=0.99):
+def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99):
     """
-    env = environment instance
-        tested with frozenlake
-    V = Value Estimate
-        np.ndarray
-            shape (s,)
-    policy = policy function
-        function
-            recieves state
-                returns next action from state
-    episodes = number of episodes to train over
-        int
-    max_steps = steps per episode
-    alpha = learning rate
-    gamma = discount rate
+    Performs the Monte Carlo algorithm for value function estimation.
+
+    Args:
+        env: environment instance
+        V: numpy.ndarray of shape (s,) containing the value estimate
+        policy: function that takes in a state and returns the next action to take
+        episodes: total number of episodes to train over
+        max_steps: maximum number of steps per episode
+        alpha: learning rate
+        gamma: discount rate
 
     Returns:
-        V = value estimate (upated)
+        V: the updated value estimate
     """
-    num_states = env.observation_space.n
-    returns = {State: [] for State in range(num_states)}
+    V = V.copy()
 
     for episode in range(episodes):
-        state = env.reset()
-        episode_data = []
+        states = []
+        rewards = []
+
+        state, _ = env.reset()
+
         for step in range(max_steps):
+            states.append(state)
+
             action = policy(state)
-            next_state, reward, terminal, _ = env.step(action)
-            episode_data.append((state, reward))
+
+            next_state, reward, terminated, truncated, _ = env.step(action)
+            rewards.append(reward)
+
             state = next_state
-            if terminal:
+
+            if terminated or truncated:
                 break
 
         G = 0
-        for state_g, reward in reversed(episode_data):
-            G = gamma * G + reward
 
-            returns[state_g].append(G)
-            V[state_g] += alpha * np.mean(returns[state_g])
+        for t in reversed(range(len(states))):
+            G = gamma * G + rewards[t]
+
+            state_t = states[t]
+            V[state_t] = V[state_t] + alpha * (G - V[state_t])
 
     return V
