@@ -4,7 +4,6 @@ policy_gradient.py
 
 Defines a simple softmax policy function.
 """
-
 import numpy as np
 
 
