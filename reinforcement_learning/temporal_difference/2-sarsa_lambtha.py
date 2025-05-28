@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""
-2-sarsa_lambtha.py: Implementation of SARSA(lambda) control with eligibility traces.
-"""
 import numpy as np
 
-def sarsa_lambtha(env, Q, lambtha,
+def sarsa_lambtha(env,
+                  Q,
+                  lambtha,
                   episodes=5000,
                   max_steps=100,
                   alpha=0.1,
@@ -25,7 +24,8 @@ def sarsa_lambtha(env, Q, lambtha,
     - gamma: discount factor (default 0.99).
     - epsilon: initial epsilon for epsilon-greedy policy (default 1).
     - min_epsilon: minimum epsilon after decay (default 0.1).
-    - epsilon_decay: amount to subtract from epsilon each episode (default 0.05).
+    - epsilon_decay: amount to subtract from epsilon
+        each episode (default 0.05).
 
     Returns:
     - Q: The updated Q-table.
