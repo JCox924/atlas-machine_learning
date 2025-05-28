@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import numpy as np
 
 def sarsa_lambtha(env,
@@ -24,8 +23,7 @@ def sarsa_lambtha(env,
     - gamma: discount factor (default 0.99).
     - epsilon: initial epsilon for epsilon-greedy policy (default 1).
     - min_epsilon: minimum epsilon after decay (default 0.1).
-    - epsilon_decay: amount to subtract from epsilon
-        each episode (default 0.05).
+    - epsilon_decay: amount to subtract from epsilon each episode (default 0.05).
 
     Returns:
     - Q: The updated Q-table.
@@ -65,6 +63,6 @@ def sarsa_lambtha(env,
             if terminated or truncated:
                 break
 
-        epsilon_curr = max(min_epsilon, epsilon_curr - epsilon_decay)
+        epsilon_curr = max(min_epsilon, epsilon_curr - np.exp(-epsilon_decay))
 
     return Q
