@@ -48,7 +48,7 @@ def sarsa_lambtha(env,
             next_action = epsilon_greedy(Q, next_state, epsilon)
 
             delta = reward + gamma * Q[next_state, next_action] - Q[state, action]
-            E[state, action] += 1
+            E[state, action] = 1
 
             Q += alpha * delta * E
             E *= gamma * lambtha
