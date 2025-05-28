@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 import numpy as np
 
+
+def epsilon_greedy(Q, state, epsilon):
+    """Epsilon-greedy policy"""
+    if np.random.random() < epsilon:
+        return np.random.randint(Q.shape[1])
+    return np.argmax(Q[state])
+
+
 def sarsa_lambtha(env,
                   Q,
                   lambtha,
@@ -29,41 +37,27 @@ def sarsa_lambtha(env,
     Returns:
     - Q: The updated Q-table.
     """
-    n_states, n_actions = Q.shape
-    epsilon_curr = epsilon
-
-    for _ in range(episodes):
-        E = np.zeros_like(Q)
+    for episode in range(episodes):
         state, _ = env.reset()
+        action = epsilon_greedy(Q, state, epsilon)
 
-        if np.random.uniform() < epsilon_curr:
-            action = np.random.randint(n_actions)
-        else:
-            action = np.argmax(Q[state])
+        E = np.zeros(Q.shape)
 
         for _ in range(max_steps):
-            next_state, reward, terminated, truncated, _ = env.step(action)
+            next_state, reward, done, truncated, _ = env.step(action)
+            next_action = epsilon_greedy(Q, next_state, epsilon)
 
-            if np.random.uniform() < epsilon_curr:
-                next_action = np.random.randint(n_actions)
-            else:
-                next_action = np.argmax(Q[next_state])
-
-            Q_next = 0 if (terminated or truncated) else Q[next_state, next_action]
-
-            delta = reward + gamma * Q_next - Q[state, action]
-
-            E[state, action] = 1
+            delta = reward + gamma * Q[next_state, next_action] - Q[state, action]
+            E[state, action] += 1
 
             Q += alpha * delta * E
-
             E *= gamma * lambtha
 
             state, action = next_state, next_action
 
-            if terminated or truncated:
+            if done or truncated:
                 break
 
-        epsilon_curr = max(min_epsilon, epsilon_curr - epsilon_decay)
+        epsilon = max(min_epsilon, epsilon * np.exp(-epsilon_decay))
 
     return Q
