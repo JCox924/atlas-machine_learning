@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"Moudle contains "
 import numpy as np
 
 
@@ -16,7 +17,8 @@ def td_lambtha(env,
     Args:
         env: environment instance
         V: numpy.ndarray of shape (s,) containing the value estimate
-        policy: function that takes in a state and returns the next action to take
+        policy: function that takes in a state
+            and returns the next action to take
         lambtha: eligibility trace factor
         episodes: total number of episodes to train over
         max_steps: maximum number of steps per episode
