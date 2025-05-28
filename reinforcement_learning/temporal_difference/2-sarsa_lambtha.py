@@ -53,7 +53,7 @@ def sarsa_lambtha(env,
 
             delta = reward + gamma * Q_next - Q[state, action]
 
-            E[state, action] += 1
+            E[state, action] = 1
 
             Q += alpha * delta * E
 
@@ -64,6 +64,6 @@ def sarsa_lambtha(env,
             if terminated or truncated:
                 break
 
-        epsilon_curr = max(min_epsilon, epsilon_curr * 0.9995)
+        epsilon_curr = max(min_epsilon, epsilon_curr - epsilon_decay)
 
     return Q
