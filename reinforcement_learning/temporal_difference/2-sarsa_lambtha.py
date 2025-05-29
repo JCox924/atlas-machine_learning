@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"Module contains funtion sarsa_lambtha"
 import numpy as np
 
 
@@ -32,7 +33,8 @@ def sarsa_lambtha(env,
     - gamma: discount factor (default 0.99).
     - epsilon: initial epsilon for epsilon-greedy policy (default 1).
     - min_epsilon: minimum epsilon after decay (default 0.1).
-    - epsilon_decay: amount to subtract from epsilon each episode (default 0.05).
+    - epsilon_decay: amount to subtract from
+        epsilon each episode (default 0.05).
 
     Returns:
     - Q: The updated Q-table.
@@ -47,7 +49,10 @@ def sarsa_lambtha(env,
             next_state, reward, done, truncated, _ = env.step(action)
             next_action = epsilon_greedy(Q, next_state, epsilon)
 
-            delta = reward + gamma * Q[next_state, next_action] - Q[state, action]
+            delta = (reward
+                     + gamma
+                     * Q[next_state, next_action]
+                     - Q[state, action])
             E[state, action] = 1
 
             Q += alpha * delta * E
@@ -58,6 +63,9 @@ def sarsa_lambtha(env,
             if done or truncated:
                 break
 
-        epsilon = min_epsilon + (1.0 - min_epsilon) * np.exp(-epsilon_decay * episode)
+        initial_epsilon = 1.0
+        epsilon = (min_epsilon +
+                   (initial_epsilon - min_epsilon)
+                   * np.exp(-epsilon_decay * episode))
 
     return Q
