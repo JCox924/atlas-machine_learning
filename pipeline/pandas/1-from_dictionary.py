@@ -1,4 +1,4 @@
-#!/bin/usr/env python3
+#!/usr/bin/env python3
 """
 Creates a pandas DataFrame from a dictionary
 """
