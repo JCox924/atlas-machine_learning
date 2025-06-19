@@ -4,6 +4,7 @@ Defines a function `slice` that extracts selected columns
     and every 60th row from a pandas DataFrame.
 """
 
+
 def slice(df):
     """Selects specific columns and every 60th row from the DataFrame.
 
