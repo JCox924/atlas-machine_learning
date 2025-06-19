@@ -4,6 +4,7 @@ Defines a function array that selects the last 10 rows of 'High' and 'Close'
     columns from a pandas DataFrame and returns them as a numpy ndarray.
 """
 
+
 def array(df):
     """
     Selects the last 10 rows of 'High' and 'Close' columns and
