@@ -4,7 +4,6 @@ Defines a function flip_switch that sorts a DataFrame
     in reverse chronological order by the 'Timestamp' column,
     transposes the result, and returns it.
 """
-import pandas as pd
 
 
 def flip_switch(df):
