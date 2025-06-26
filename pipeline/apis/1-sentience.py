@@ -20,7 +20,7 @@ def sentientPlanets():
 
     # Traverse all species pages
     while species_url:
-        response = requests.get(species_url)
+        response = requests.get(species_url, verify=False)
         if response.status_code != 200:
             break
         data = response.json()
