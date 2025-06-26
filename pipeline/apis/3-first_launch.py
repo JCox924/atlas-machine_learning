@@ -43,7 +43,6 @@ def main():
     pad_name = pad_data.get('name')
     pad_locality = pad_data.get('locality')
 
-    # Print in the required format
     print(f"{name} ({date_local}) {rocket_name} - {pad_name} ({pad_locality})")
 
 
