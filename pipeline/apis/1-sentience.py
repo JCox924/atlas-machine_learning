@@ -46,7 +46,7 @@ def sentientPlanets():
 
     planets = []
     for url in sorted_urls:
-        resp = requests.get(url)
+        resp = requests.get(url, verify=False)
         if resp.status_code != 200:
             continue
         planet_data = resp.json()
