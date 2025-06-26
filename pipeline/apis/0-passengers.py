@@ -23,7 +23,7 @@ def availableShips(passengerCount):
     url = 'https://swapi.dev/api/starships/'
 
     while url:
-        response = requests.get(url)
+        response = requests.get(url, verify=False)
         if response.status_code != 200:
             break
         data = response.json()
