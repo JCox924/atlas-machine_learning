@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script that fetches and prints the location of a GitHub user from their API URL.
+Script that prints the location of a GitHub user via the GitHub API.
 """
 
 import sys
@@ -8,44 +8,48 @@ import time
 import requests
 
 
-def main():
+def fetch_location(url):
     """
-    Main execution: fetch and print GitHub user location.
+    Fetch the user's location from the GitHub API URL.
 
-    Behavior:
-        - If status code is 200: prints the 'location' field.
-        - If status code is 404: prints "Not found".
-        - If status code is 403: prints "Reset in X min" where X is minutes
-          until rate limit reset (from 'X-RateLimit-Reset' header).
+    Returns:
+        tuple(status_code, location_or_reset)
     """
-    if len(sys.argv) < 2:
-        sys.exit(1)
-
-    url = sys.argv[1]
-    response = requests.get(url, verify=False)
+    response = requests.get(url)
     status = response.status_code
 
+    if status == 200:
+        data = response.json()
+        return 200, data.get('location') if data.get('location') is not None else ''
     if status == 404:
-        print("Not found")
-        return
-
+        return 404, None
     if status == 403:
         reset = response.headers.get('X-RateLimit-Reset')
         try:
             reset = int(reset)
             now = int(time.time())
-            minutes = int((reset - now) / 60) if reset > now else 0
+            minutes = (reset - now) // 60 if reset > now else 0
         except Exception:
             minutes = 0
-        print(f"Reset in {minutes} min")
-        return
+        return 403, minutes
+    return status, None
+
+
+def main():
+    if len(sys.argv) != 2:
+        sys.exit(1)
+
+    url = sys.argv[1]
+    status, info = fetch_location(url)
 
     if status == 200:
-        data = response.json()
-        print(data.get('location'))
-        return
-
-    print("Not found")
+        print(info)
+    elif status == 404:
+        print("Not found")
+    elif status == 403:
+        print(f"Reset in {info} min")
+    else:
+        print("Not found")
 
 
 if __name__ == '__main__':
