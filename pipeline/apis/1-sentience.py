@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """
-Module to retrieve home planets of all sentient species from the Star Wars API (SWAPI).
+Module to retrieve home planets of all
+    sentient species from the Star Wars API (SWAPI).
 """
 import requests
 
 
 def sentientPlanets():
     """
-    Return a list of unique planet names that are homeworlds of sentient species.
+    Return a list of unique planet names that
+        are homeworlds of sentient species.
 
-    A species is considered sentient if its classification or designation is 'sentient'.
+    A species is considered sentient if its
+        classification or designation is 'sentient'.
     Results are ordered by ascending planet ID.
 
     Returns:
@@ -26,10 +29,12 @@ def sentientPlanets():
         data = response.json()
 
         for species in data.get('results', []):
-            classification = species.get('classification', '').strip().lower()
+            classification = (
+                species.get('classification', '').strip().lower())
             designation = species.get('designation', '').strip().lower()
             hw = species.get('homeworld')
-            if (classification == 'sentient' or designation == 'sentient') and hw:
+            if (classification == 'sentient' or
+                designation == 'sentient') and hw:
                 homeworld_urls.append(hw)
 
         species_url = data.get('next')
