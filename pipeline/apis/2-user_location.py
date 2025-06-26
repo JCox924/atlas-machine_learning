@@ -13,6 +13,7 @@ def fetch_location(url):
 
     Returns:
         tuple(status_code, location_or_reset)
+
     """
     response = requests.get(url, verify=False)
     status = response.status_code
