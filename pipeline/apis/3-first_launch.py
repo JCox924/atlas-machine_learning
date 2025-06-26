@@ -24,6 +24,14 @@ def get_first_launch():
 
 
 def main():
+    """
+    Main function that retrieves and displays
+    information about SpaceX's first launch.
+    
+    The function fetches launch data,
+        rocket information, and launchpad details
+        from the SpaceX API and prints them in a formatted string.
+    """
     # Get the first launch
     launch = get_first_launch()
     name = launch.get('name')
@@ -31,13 +39,16 @@ def main():
 
     # Fetch rocket name
     rocket_id = launch.get('rocket')
-    rocket_resp = requests.get(f'https://api.spacexdata.com/v4/rockets/{rocket_id}', verify=False)
+    rocket_resp = (
+        requests.get(f'https://api.spacexdata.com/v4/rockets/{rocket_id}',
+                     verify=False))
     rocket_resp.raise_for_status()
     rocket_name = rocket_resp.json().get('name')
 
     # Fetch launchpad info
     pad_id = launch.get('launchpad')
-    pad_resp = requests.get(f'https://api.spacexdata.com/v4/launchpads/{pad_id}', verify=False)
+    pad_url = f'https://api.spacexdata.com/v4/launchpads/{pad_id}'
+    pad_resp = requests.get(pad_url, verify=False)
     pad_resp.raise_for_status()
     pad_data = pad_resp.json()
     pad_name = pad_data.get('name')

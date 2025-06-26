@@ -11,16 +11,24 @@ def fetch_location(url):
     """
     Fetch the user's location from the GitHub API URL.
 
-    Returns:
-        tuple(status_code, location_or_reset)
+    Args:
+        url (str): GitHub API URL for the user.
 
+    Returns:
+        tuple: Contains (status_code, location_or_reset) where:
+            - status_code (int): HTTP status code from the API response
+            - location_or_reset: Either the user's location string (for 200),
+                               number of minutes until rate limit
+                               reset (for 403),
+                               or None (for other status codes)
     """
-    response = requests.get(url, verify=False)
+    response = requests.get(url)
     status = response.status_code
 
     if status == 200:
         data = response.json()
-        return 200, data.get('location') if data.get('location') is not None else ''
+        return (200, data.get('location') if
+        data.get('location') is not None else '')
     if status == 404:
         return 404, None
     if status == 403:
@@ -48,9 +56,6 @@ def main():
 
     Usage:
         ./2-user_location.py <github-api-url>
-
-    Args:
-        None - uses sys.argv for command line arguments
 
     Returns:
         None - exits with status code 1 if incorrect number of arguments
