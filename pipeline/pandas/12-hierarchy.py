@@ -14,7 +14,8 @@ import pandas as pd
 
 
 def hierarchy(df1, df2):
-    """Combines bitstamp and coinbase data in a hierarchical index by timestamp.
+    """Combines bitstamp and coinbase data in
+        a hierarchical index by timestamp.
 
     Parameters:
     df1 : Coinbase data containing a 'Timestamp' column.
