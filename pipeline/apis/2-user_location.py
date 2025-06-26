@@ -22,7 +22,7 @@ def main():
         sys.exit(1)
 
     url = sys.argv[1]
-    response = requests.get(url)
+    response = requests.get(url, verify=False)
     status = response.status_code
 
     if status == 404:
