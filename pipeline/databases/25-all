@@ -1,0 +1,2 @@
+// 25-all: list all documents in the school collection
+db.school.find();
